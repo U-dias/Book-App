@@ -1,0 +1,14 @@
+<h1>新規ユーザー登録</h1>
+<%= render "shared/error_messages", object: @user %>
+<%= form_with model: @user, local: true, data: { turbo: false } do |form| %>
+
+  <div>
+    <%= form.label :user_name, "ユーザー名" %>
+    <%= form.text_field :user_name %>
+    <%= form.label :email, "メールアドレス" %>
+    <%= form.email_field :email %>
+    <%= form.label :password, "パスワード" %>
+    <%= form.password_field :password %>
+  </div>
+  <%= form.submit "登録" %>
+<% end %>

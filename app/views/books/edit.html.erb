@@ -1,0 +1,41 @@
+<h1>書籍編集</h1>
+<%= form_with model: @book, local: true, data: { turbo: false } do |form| %>
+
+  <div>
+    <%= form.label :title, "書名" %><br>
+    <%= form.text_field :title %>
+  </div>
+  <div>
+    <%= form.label :author, "著者" %><br>
+    <%= form.text_field :author %>
+  </div>
+  <div>
+    <%= form.label :series_name, "シリーズ(新規作成)" %><br>
+    <%= form.text_field :series_name %>
+  </div>
+  <div>
+    <%= form.label :series_id, "シリーズ(既存)" %><br>
+    <%= form.collection_select :series_id, @series, :id, :name, prompt: "選択してください" %>
+  </div>
+  <div>
+    <%= form.label :body, "説明" %><br>
+    <%= form.text_area :body %>
+  </div>
+  <div>
+    <%= form.label :rating, "評価" %><br>
+    <%= form.number_field :rating %>
+  </div>
+  <div>
+    <%= form.label :status, "ステータス" %><br>
+    <%= form.select :status, Book.statuses.keys.map { |key| [I18n.t("enums.book.status.#{key}"), key] } %>
+  </div>
+  <div>
+    <%= form.label :tag_ids, "タグ（選択）" %><br>
+    <%= form.collection_check_boxes :tag_ids, Tag.all, :id, :name %>
+  </div>
+  <div>
+    <%= form.label :tag_name, "タグ（新規入力）" %><br>
+    <%= form.text_field :tag_name %>
+  </div>
+  <%= form.submit "更新" %>
+<% end %>

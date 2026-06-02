@@ -1,0 +1,25 @@
+<h1>新規書籍登録</h1>
+<%= form_with model: @book, local: true, data: { turbo: false } do |form| %>
+
+  <div>
+    <%= form.label :title, "書名" %>
+    <%= form.text_field :title %>
+
+    <%= form.label :author, "著者" %>
+    <%= form.text_field :author %>
+
+    <%= form.label :series_name, "シリーズ" %>
+    <%= form.text_field :series_name %>
+    <%= form.collection_select :series_id, @series, :id, :name, prompt: "選択してください" %>
+
+    <%= form.label :body, "説明" %>
+    <%= form.text_area :body %>
+
+    <%= form.label :rating, "評価" %>
+    <%= form.number_field :rating %>
+
+    <%= form.label :status, "ステータス" %>
+    <%= form.select :status, Book.statuses.keys.map { |key| [I18n.t("enums.book.status.#{key}"), key] } %>
+  </div>
+  <%= form.submit "登録" %>
+<% end %>

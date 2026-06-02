@@ -1,0 +1,21 @@
+ja:
+  enums:
+    book:
+      status:
+        unread: 未読
+        reading: 読書中
+        finished: 読了
+  activerecord:
+    models:
+      user: ユーザー
+    attributes:
+      user:
+        user_name: ユーザー名
+        email: メールアドレス
+        password: パスワード
+    errors:
+      messages:
+        blank: を入力してください
+        taken: はすでに存在します
+        too_short: は%{count}文字以上で入力してください
+        confirmation: と一致しません

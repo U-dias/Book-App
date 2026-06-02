@@ -1,0 +1,11 @@
+<p>ログインフォーム</p>
+<%= form_with url: session_path, local: true do |form| %>
+  <div>
+    <%= form.label :email, "メールアドレス" %>
+    <%= form.email_field :email, required: true %>
+  </div>
+  <div>
+    <%= form.label :password, "パスワード" %>
+    <%= form.password_field :password, required: true %>
+  </div>
+<% end %>

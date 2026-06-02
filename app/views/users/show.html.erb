@@ -1,0 +1,33 @@
+<h1>Users#show</h1>
+
+<h2>閲覧履歴</h2>
+<div class= "books-list">
+  <% @read_histories.each do |history| %>
+    <%= link_to book_path(history.book), class: "book-card" do %>
+      <p><%= history.book.title %></p>
+    <% end %>
+  <% end %>
+</div>
+<h2>続きから読む</h2>
+<div class= "books-list">
+  <% @reading_books.each do |book| %>
+    <%= link_to book_path(book), class: "book-card" do %>
+      <p><%= book.title %></p>
+    <% end %>
+  <% end %>
+</div>
+<h2>未読の書籍</h2>
+<div class= "books-list">
+  <% @unread_books.each do |book| %>
+    <%= link_to book_path(book), class: "book-card" do %>
+      <p><%= book.title %></p>
+    <% end %>
+  <% end %>
+</div>
+
+<%= link_to "新規登録", new_book_path %>
+<%= link_to "プロフィール編集", edit_user_path(current_user) %>
+<%= link_to "アカウント削除",
+    user_path,
+    data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか？" } %>
+
