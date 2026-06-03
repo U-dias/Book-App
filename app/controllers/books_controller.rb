@@ -1,43 +1,48 @@
 class BooksController < ApplicationController
-  before_action :require_login, only: [:new, :create]
+
   def index
-    @books = Book.all
+    @ownerships = current_user.ownerships.includes(:book)
     #キーワード検索
     if params[:keyword].present?
-    @books = Book.where("title LIKE ? OR author LIKE ?", "%#{params[:keyword]}%", "%#{params[:keyword]}%")
+    @ownerships = @ownerships.joins(:book)
+      .where("title LIKE ? OR author LIKE ?", "%#{params[:keyword]}%", "%#{params[:keyword]}%")
     end
     #タグ検索
     if params[:tag_ids].present?
-    @books = Book.joins(:tags).where(tags: { id: params[:tag_ids] })
+    @ownerships = @ownerships.joins(:tags).where(tags: { id: params[:tag_ids] })
     end
   end
 
   def new
     @book = Book.new
-    @book.user = current_user
     @series = Series.all
   end
 
   def create
-    #シリーズの作成又は既存使用
     @book = Book.new(book_params)
-    @book.user = current_user
-    if params[:book][:series_name].present?
-      @book.series = Series.find_or_create_by(name: params[:book][:series_name])
-    elsif params[:book][:series_id].present?
-      @book.series = Series.find(params[:book][:series_id])
+    @series = Series.all
+
+    #書籍の新規登録
+    @book = Book.find_or_initialize_by(title: book_params[:title])
+
+    if @book.new_record?
+      @book.assign_attributes(book_params)
+      #シリーズの作成又は既存使用
+      if params[:book][:series_name].present?
+        @book.series = Series.find_or_create_by(name: params[:book][:series_name])
+      elsif params[:book][:series_id].present?
+        @book.series = Series.find(params[:book][:series_id])
+      end
+      return render :new unless @book.save
     end
-    if @book.save
-      redirect_to book_path(@book)
-    else
-      @series = Series.all
-      render :new
-    end
+    current_user.ownerships.create(book: @book)
+    redirect_to @book
   end
 
   def show
-    #閲覧履歴の表示
     @book = Book.find(params[:id])
+    #閲覧履歴の表示
+    @ownership = current_user.ownerships.find_by(book: @book)
 
     history = current_user.read_histories.find_or_create_by(book: @book)
     history.touch
@@ -46,8 +51,8 @@ class BooksController < ApplicationController
     @histories.offset(20).destroy_all if @histories.count > 20
 
     #続きの書籍を表示
-    @book = Book.find(params[:id])
-    @continuation = current_user.books
+    @ownership = current_user.ownerships.find_by(book_id: params[:id])
+    @continuation = current_user.ownerships
       .where(status: [:unread, :reading])
       .limit(5)
   end
@@ -81,8 +86,9 @@ class BooksController < ApplicationController
     end
     @book.tags = selected_tags + new_tags
     #ステータスの更新
-    @book.status = params[:book][:status]
     if @book.save
+      ownership = current_user.ownerships.find_by(book_id: @book.id)
+      ownership.update(status: params[:book][:status])
       redirect_to book_path(@book)
     else
       @series = Series.all
@@ -103,7 +109,4 @@ class BooksController < ApplicationController
     tag_ids: [])
   end
 
-  def require_login
-    redirect_to login_path unless current_user
-  end
 end

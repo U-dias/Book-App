@@ -39,3 +39,12 @@ a {
 a:hover {
   text-decoration: underline;
 }
+
+/* エラーメッセージの統一 */
+.error-messages {
+  color: red;
+  background: #ffecec;
+  padding: 10px;
+  border: 1px solid red;
+  margin-bottom: 10px;
+}

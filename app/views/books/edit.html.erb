@@ -1,4 +1,5 @@
 <h1>書籍編集</h1>
+<%= render "shared/error_messages", object: @book %>
 <%= form_with model: @book, local: true, data: { turbo: false } do |form| %>
 
   <div>
@@ -27,7 +28,7 @@
   </div>
   <div>
     <%= form.label :status, "ステータス" %><br>
-    <%= form.select :status, Book.statuses.keys.map { |key| [I18n.t("enums.book.status.#{key}"), key] } %>
+    <%= form.select :status, Ownership.statuses.keys.map { |key| [I18n.t("enums.ownership.status.#{key}"), key] } %>
   </div>
   <div>
     <%= form.label :tag_ids, "タグ（選択）" %><br>

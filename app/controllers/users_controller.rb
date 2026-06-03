@@ -20,8 +20,8 @@ class UsersController < ApplicationController
 
     #続きの書籍の表示
     @user = current_user
-    @reading_books = current_user.books.where(status: "reading").limit(5)
-    @unread_books  = current_user.books.where(status: "unread").limit(5)
+    @reading_books = current_user.ownerships.where(status: "reading").limit(5)
+    @unread_books  = current_user.ownerships.where(status: "unread").limit(5)
   end
 
   def edit

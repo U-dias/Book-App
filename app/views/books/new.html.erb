@@ -1,4 +1,5 @@
 <h1>新規書籍登録</h1>
+<%= render "shared/error_messages", object: @book %>
 <%= form_with model: @book, local: true, data: { turbo: false } do |form| %>
 
   <div>
@@ -17,9 +18,6 @@
 
     <%= form.label :rating, "評価" %>
     <%= form.number_field :rating %>
-
-    <%= form.label :status, "ステータス" %>
-    <%= form.select :status, Book.statuses.keys.map { |key| [I18n.t("enums.book.status.#{key}"), key] } %>
   </div>
   <%= form.submit "登録" %>
 <% end %>

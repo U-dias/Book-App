@@ -4,13 +4,13 @@
 <%= form_with url: books_path, method: :get, local: true do |f| %>
   <%= f.label :keyword, "キーワード" %>
   <%= f.text_field :keyword %>
-  <%= f.collection_select :tag_ids, Tag.all, :id, :name, include_blank: "タグ選択" %>
+  <%= f.collection_select :tag_ids, Tag.all, :id, :name, include_blank: "タグ選択", multipull: true %>
   <%= f.submit "検索" %>
 <% end %></div>
 <div class="books-list" >
-  <% @books.each do |book| %>
-    <%= link_to book_path(book), class: "book-card" do %>
-      <%= book.title %>
+  <% @ownerships.each do |ownership| %>
+    <%= link_to book_path(ownership.book), class: "book-card" do %>
+      <%= ownership.book.title %>
     <% end %>
   <% end %>
 </div>

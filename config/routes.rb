@@ -5,6 +5,8 @@ Rails.application.routes.draw do
   resource :session, only: [:new, :create, :destroy]
   resources :read_histories, only: [:index, :show]
   resources :books, only: [:index, :new, :create, :show, :edit, :update, :destroy]
+  resources :ownerships, only: [:index, :show, :edit, :update, :destroy]
+
   post 'guest_login', to: 'sessions#guest_login'
   delete '/logout' , to: 'sessions#destroy'
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
