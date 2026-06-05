@@ -7,7 +7,8 @@ class Book < ApplicationRecord
   has_many :users, through: :ownerships
   has_many :read_histories, dependent: :destroy
 
-  validates :title, presence: true, uniqueness: true
+  validates :title, presence: true
   validates :author, presence: true
-
+  validates :series_id, presence: true
+  validates :title, uniqueness: { scope: [:author, :series_id] }
 end

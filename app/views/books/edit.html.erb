@@ -2,13 +2,13 @@
 <%= render "shared/error_messages", object: @book %>
 <%= form_with model: @book, local: true, data: { turbo: false } do |form| %>
 
-  <div>
+  <div class="field">
     <%= form.label :title, "書名" %><br>
-    <%= form.text_field :title %>
+    <%= form.text_field :title, class: ("field-with-error" if @book.errors[:title].any?) %>
   </div>
   <div>
     <%= form.label :author, "著者" %><br>
-    <%= form.text_field :author %>
+    <%= form.text_field :author, class: ("field-with-error" if @book.errors[:author].any?) %>
   </div>
   <div>
     <%= form.label :series_name, "シリーズ(新規作成)" %><br>

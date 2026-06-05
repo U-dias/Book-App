@@ -1,0 +1,13 @@
+/* 各フォームのエラー表示用 */
+.field-error {
+  color: rgb(255, 132, 132);
+  font-size: 0.9em;
+}
+
+.field-with-error {
+  border: 2px solid rgb(255, 132, 132);
+}
+
+.field_with_errors input {
+  border: 2px solid rgb(255, 132, 132);
+}

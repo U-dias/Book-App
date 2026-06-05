@@ -1,15 +1,20 @@
 class BooksController < ApplicationController
+  before_action :restrict_guest, only: [:edit, :update, :destroy]
 
   def index
-    @ownerships = current_user.ownerships.includes(:book)
+    @ownerships = if current_user&.guest?
+      Ownership.includes(:book).all
+    else
+      current_user.ownerships.includes(:book)
+    end
     #キーワード検索
     if params[:keyword].present?
     @ownerships = @ownerships.joins(:book)
-      .where("title LIKE ? OR author LIKE ?", "%#{params[:keyword]}%", "%#{params[:keyword]}%")
+      .where("books.title LIKE ? OR books.author LIKE ?", "%#{params[:keyword]}%", "%#{params[:keyword]}%")
     end
     #タグ検索
     if params[:tag_ids].present?
-    @ownerships = @ownerships.joins(:tags).where(tags: { id: params[:tag_ids] })
+    @ownerships = @ownerships.joins(book: :tags).where(tags: { id: params[:tag_ids] })
     end
   end
 
@@ -23,7 +28,17 @@ class BooksController < ApplicationController
     @series = Series.all
 
     #書籍の新規登録
-    @book = Book.find_or_initialize_by(title: book_params[:title])
+    @book = Book.find_or_initialize_by(
+      title: book_params[:title],
+      author: book_params[:author],
+      series_id: book_params[:series_id])
+
+    # 登録済みの書籍
+    if @book.persisted?
+      flash.now[:alert] = "この本はすでに登録されています"
+      @series = Series.all
+      return render :new, status: :unprocessable_entity
+    end
 
     if @book.new_record?
       @book.assign_attributes(book_params)
@@ -35,12 +50,14 @@ class BooksController < ApplicationController
       end
       return render :new unless @book.save
     end
-    current_user.ownerships.create(book: @book)
+    current_user.ownerships.find_or_create_by(book: @book)
     redirect_to @book
   end
 
   def show
     @book = Book.find(params[:id])
+
+    @ownership = current_user&.ownerships&.find_by(book_id: @book.id)
     #閲覧履歴の表示
     @ownership = current_user.ownerships.find_by(book: @book)
 
@@ -100,6 +117,12 @@ class BooksController < ApplicationController
     @book = Book.find(params[:id])
     @book.destroy
     redirect_to books_path
+  end
+
+  def restrict_guest
+    if current_user&.guest?
+      redirect_to books_path, alert: "ゲストユーザーは編集・削除できません"
+    end
   end
 
   private
