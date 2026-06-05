@@ -1,43 +1,65 @@
 class BooksController < ApplicationController
-  before_action :require_login, only: [:new, :create]
+  before_action :restrict_guest, only: [:edit, :update, :destroy]
+
   def index
-    @books = Book.all
+    @ownerships = if current_user&.guest?
+      Ownership.includes(:book).all
+    else
+      current_user.ownerships.includes(:book)
+    end
     #キーワード検索
     if params[:keyword].present?
-    @books = Book.where("title LIKE ? OR author LIKE ?", "%#{params[:keyword]}%", "%#{params[:keyword]}%")
+    @ownerships = @ownerships.joins(:book)
+      .where("books.title LIKE ? OR books.author LIKE ?", "%#{params[:keyword]}%", "%#{params[:keyword]}%")
     end
     #タグ検索
     if params[:tag_ids].present?
-    @books = Book.joins(:tags).where(tags: { id: params[:tag_ids] })
+    @ownerships = @ownerships.joins(book: :tags).where(tags: { id: params[:tag_ids] })
     end
   end
 
   def new
     @book = Book.new
-    @book.user = current_user
     @series = Series.all
   end
 
   def create
-    #シリーズの作成又は既存使用
     @book = Book.new(book_params)
-    @book.user = current_user
-    if params[:book][:series_name].present?
-      @book.series = Series.find_or_create_by(name: params[:book][:series_name])
-    elsif params[:book][:series_id].present?
-      @book.series = Series.find(params[:book][:series_id])
-    end
-    if @book.save
-      redirect_to book_path(@book)
-    else
+    @series = Series.all
+
+    #書籍の新規登録
+    @book = Book.find_or_initialize_by(
+      title: book_params[:title],
+      author: book_params[:author],
+      series_id: book_params[:series_id])
+
+    # 登録済みの書籍
+    if @book.persisted?
+      flash.now[:alert] = "この本はすでに登録されています"
       @series = Series.all
-      render :new
+      return render :new, status: :unprocessable_entity
     end
+
+    if @book.new_record?
+      @book.assign_attributes(book_params)
+      #シリーズの作成又は既存使用
+      if params[:book][:series_name].present?
+        @book.series = Series.find_or_create_by(name: params[:book][:series_name])
+      elsif params[:book][:series_id].present?
+        @book.series = Series.find(params[:book][:series_id])
+      end
+      return render :new unless @book.save
+    end
+    current_user.ownerships.find_or_create_by(book: @book)
+    redirect_to @book
   end
 
   def show
-    #閲覧履歴の表示
     @book = Book.find(params[:id])
+
+    @ownership = current_user&.ownerships&.find_by(book_id: @book.id)
+    #閲覧履歴の表示
+    @ownership = current_user.ownerships.find_by(book: @book)
 
     history = current_user.read_histories.find_or_create_by(book: @book)
     history.touch
@@ -46,8 +68,8 @@ class BooksController < ApplicationController
     @histories.offset(20).destroy_all if @histories.count > 20
 
     #続きの書籍を表示
-    @book = Book.find(params[:id])
-    @continuation = current_user.books
+    @ownership = current_user.ownerships.find_by(book_id: params[:id])
+    @continuation = current_user.ownerships
       .where(status: [:unread, :reading])
       .limit(5)
   end
@@ -81,8 +103,9 @@ class BooksController < ApplicationController
     end
     @book.tags = selected_tags + new_tags
     #ステータスの更新
-    @book.status = params[:book][:status]
     if @book.save
+      ownership = current_user.ownerships.find_by(book_id: @book.id)
+      ownership.update(status: params[:book][:status])
       redirect_to book_path(@book)
     else
       @series = Series.all
@@ -96,6 +119,12 @@ class BooksController < ApplicationController
     redirect_to books_path
   end
 
+  def restrict_guest
+    if current_user&.guest?
+      redirect_to books_path, alert: "ゲストユーザーは編集・削除できません"
+    end
+  end
+
   private
   def book_params
     params.require(:book).permit(
@@ -103,7 +132,4 @@ class BooksController < ApplicationController
     tag_ids: [])
   end
 
-  def require_login
-    redirect_to login_path unless current_user
-  end
 end

@@ -10,17 +10,17 @@
 </div>
 <h2>続きから読む</h2>
 <div class= "books-list">
-  <% @reading_books.each do |book| %>
-    <%= link_to book_path(book), class: "book-card" do %>
-      <p><%= book.title %></p>
+  <% @reading_books.each do |ownership| %>
+    <%= link_to book_path(ownership.book), class: "book-card" do %>
+      <p><%= ownership.book.title %></p>
     <% end %>
   <% end %>
 </div>
 <h2>未読の書籍</h2>
 <div class= "books-list">
-  <% @unread_books.each do |book| %>
-    <%= link_to book_path(book), class: "book-card" do %>
-      <p><%= book.title %></p>
+  <% @unread_books.each do |ownership| %>
+    <%= link_to book_path(ownership.book), class: "book-card" do %>
+      <p><%= ownership.book.title %></p>
     <% end %>
   <% end %>
 </div>

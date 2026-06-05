@@ -3,17 +3,12 @@ class Book < ApplicationRecord
 
   has_many :book_tags, dependent: :destroy
   has_many :tags, through: :book_tags
-
   has_many :ownerships, dependent: :destroy
   has_many :users, through: :ownerships
-
   has_many :read_histories, dependent: :destroy
 
-  enum status: { unread: 0, reading: 1, finished: 2 }
-
-
-  def status_label
-    I18n.t("enums.book.status.#{status}")
-  end
-
+  validates :title, presence: true
+  validates :author, presence: true
+  validates :series_id, presence: true
+  validates :title, uniqueness: { scope: [:author, :series_id] }
 end

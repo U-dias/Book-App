@@ -6,6 +6,11 @@ class User < ApplicationRecord
   has_many :read_histories, dependent: :destroy
   #バリデーション
   validates :email, presence: true, uniqueness: true
-  validates :user_name, uniqueness: true
+  validates :user_name, presence: true, uniqueness: true
   validates :password, length: { minimum: 6 }, presence: true
+
+  # ゲストユーザー判定
+  def guest?
+    email == "guest@example.com"
+  end
 end

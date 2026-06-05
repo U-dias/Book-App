@@ -5,14 +5,17 @@
 <p>シリーズ：<%= @book.series&.name %></p>
 <p>評価：<%= @book.rating %></p>
 <p>内容：<%= @book.body %></p>
-<p>ステータス：<%= @book.status_label %></p>
-
-<h3>タグ</h3>
-<% @book.tags.each do |tag| %>
-  <span><%= tag.name %></span>
+<% if @ownership.present? %>
+  <p>ステータス：<%= @ownership.status ? @ownership.status_label : "未設定" %></p>
+  <h3>タグ</h3>
+  <% @ownership.book.tags.each do |tag| %>
+    <span><%= tag.name %></span>
+  <% end %>
 <% end %>
 </div>
-<%= link_to "削除", book_path(@book), data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか？" } %>
-<%= link_to "編集", edit_book_path(@book) %>
+<% if @ownership.present? %>
+  <%= link_to "削除", book_path(@book), data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか？" } %>
+  <%= link_to "編集", edit_book_path(@book) %>
+<% end %>
 <%= link_to '一つ前に戻る', request.referer || root_path  %>
 <%= link_to '一覧に戻る', books_path %>

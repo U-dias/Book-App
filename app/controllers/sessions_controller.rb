@@ -1,4 +1,6 @@
 class SessionsController < ApplicationController
+  skip_before_action :require_login, only: [:new, :create, :guest_login]
+
   def new
     @user = User.new
   end
@@ -12,7 +14,7 @@ class SessionsController < ApplicationController
       @user ||= User.new(email: params[:user][:email])
 
       @user.errors.add(:base, "メールアドレスまたはパスワードが違います")
-      render :new
+      render :new, status: :unprocessable_entity
     end
     logger.debug "ERRORS: #{@user.errors.full_messages}"
   end
