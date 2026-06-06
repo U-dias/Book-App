@@ -1,5 +1,5 @@
 class BooksController < ApplicationController
-  before_action :restrict_guest, only: [:edit, :update, :destroy]
+  before_action :restrict_guest, only: [:edit, :update, :destroy, :new, :create]
 
   def index
     @ownerships = if current_user&.guest?
@@ -117,12 +117,6 @@ class BooksController < ApplicationController
     @book = Book.find(params[:id])
     @book.destroy
     redirect_to books_path
-  end
-
-  def restrict_guest
-    if current_user&.guest?
-      redirect_to books_path, alert: "ゲストユーザーは編集・削除できません"
-    end
   end
 
   private
