@@ -1,6 +1,6 @@
 <h1>書籍編集</h1>
 <%= render "shared/error_messages", object: @book %>
-<%= form_with model: @book, local: true, data: { turbo: false } do |form| %>
+<%= form_with model: @book, local: true, autocomplete: "off", data: { turbo: false } do |form| %>
 
   <div class="field">
     <%= form.label :title, "書名" %><br>

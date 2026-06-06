@@ -1,6 +1,6 @@
 <h1>新規ユーザー登録</h1>
 <%= render "shared/error_messages", object: @user %>
-<%= form_with model: @user, local: true, data: { turbo: false } do |form| %>
+<%= form_with model: @user, local: true, autocomplete: "off", data: { turbo: false } do |form| %>
 
   <div>
     <%= form.label :user_name, "ユーザー名" %>
