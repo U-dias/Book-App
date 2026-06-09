@@ -1,0 +1,16 @@
+/* 更新ボタン */
+.submit-btn {
+  display: inline-block;
+  padding: 8px 16px;
+  border: solid 1px black;
+  border-radius: 6px;
+  text-decoration: none;
+  color: rgb(117, 114, 114);
+  font-size: 14px;
+  background-color: white;
+}
+
+.submit-btn:hover {
+  color: #007bff;
+  cursor: pointer;
+}

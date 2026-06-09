@@ -5,6 +5,7 @@
   <% @read_histories.each do |history| %>
     <%= link_to book_path(history.book), class: "book-card" do %>
       <p><%= history.book.title %></p>
+      <p><%= history.book.author %></p>
     <% end %>
   <% end %>
 </div>
@@ -13,6 +14,7 @@
   <% @reading_books.each do |ownership| %>
     <%= link_to book_path(ownership.book), class: "book-card" do %>
       <p><%= ownership.book.title %></p>
+      <p><%= ownership.book.author %></p>
     <% end %>
   <% end %>
 </div>
@@ -21,13 +23,13 @@
   <% @unread_books.each do |ownership| %>
     <%= link_to book_path(ownership.book), class: "book-card" do %>
       <p><%= ownership.book.title %></p>
+      <p><%= ownership.book.author %></p>
     <% end %>
   <% end %>
 </div>
-<%= link_to "新規登録", new_book_path %>
-<%= link_to "プロフィール編集", edit_user_path(current_user) %>
-<%= link_to "アカウント削除",
-    user_path,
-    data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか？" } %>
+<div class="user-actions">
+<%= link_to "新規登録", new_book_path, class: "link-btn" %>
+<%= link_to "プロフィール編集", edit_user_path(current_user), class: "link-btn" %>
+</div>
 
 

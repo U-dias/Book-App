@@ -1,21 +1,21 @@
 <h1>Books#index</h1>
-<h2>検索フォーム</h2>
-<div>
-<%= form_with url: books_path, method: :get, local: true do |f| %>
-  <%= f.label :keyword, "キーワード" %>
-  <%= f.text_field :keyword %>
-  <%= f.collection_select :tag_ids, Tag.all, :id, :name, include_blank: "タグ選択", multipull: true %>
-  <%= f.submit "検索" %>
-<% end %></div>
+
+<div class="books-index">
+  <div class="search-form">
+  <h2>検索フォーム</h2>
+  <%= form_with url: books_path, method: :get, local: true do |f| %>
+    <%= f.label :keyword, "キーワード" %>
+    <%= f.text_field :keyword, class: "form-control" %>
+    <%= f.collection_select :tag_ids, Tag.all, :id, :name, { include_blank: "タグ選択" }, { class: "form-control" } %>
+    <%= f.submit "検索" %>
+  <% end %></div>
+</div>
 <div class="books-list" >
   <% @ownerships.each do |ownership| %>
     <%= link_to book_path(ownership.book), class: "book-card" do %>
-      <%= ownership.book.title %>
+      <p class="book-title"><%= ownership.book.title %></p>
+      <p class="book-title"><%= ownership.book.author %></p>
     <% end %>
   <% end %>
 </div>
-<% unless current_user&.guest? %>
-  <%= link_to "新規登録", new_book_path %>
-  <%= link_to "編集", edit_book_path(@book) %>
-  <%= link_to "削除", @book, method: :delete %>
-<% end %>
+

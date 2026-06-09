@@ -9,13 +9,19 @@
   <p>ステータス：<%= @ownership.status ? @ownership.status_label : "未設定" %></p>
   <h3>タグ</h3>
   <% @ownership.book.tags.each do |tag| %>
-    <span><%= tag.name %></span>
+    <span class="tag" ><%= tag.name %></span>
   <% end %>
 <% end %>
 </div>
+<div class="user-actions">
 <% if @ownership.present? %>
-  <%= link_to "削除", book_path(@book), data: { turbo_method: :delete, turbo_confirm: "本当に削除しますか？" } %>
-  <%= link_to "編集", edit_book_path(@book) %>
+  <%= button_to "削除",
+    book_path(@book),
+    method: :delete,
+    form: { data: { turbo: false } },
+    data: { turbo_confirm: "本当に削除しますか？" }, class: "delete-btn" %>
+  <%= link_to "編集", edit_book_path(@book), class: "link-btn" %>
 <% end %>
-<%= link_to '一つ前に戻る', request.referer || root_path  %>
-<%= link_to '一覧に戻る', books_path %>
+<%= link_to '一つ前に戻る', request.referer || root_path, class: "link-btn"  %>
+<%= link_to '一覧に戻る', books_path, class: "link-btn" %>
+</div>

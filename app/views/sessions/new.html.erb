@@ -2,15 +2,17 @@
 <h1>ログイン画面</h1>
 <%= render "shared/error_messages", object: @user %>
 <%= form_with url: session_path, scope: :user, autocomplete: "off", data: { turbo: false } do |f| %>
-  <div>
-    <%= f.label :email, "メールアドレス" %>
-    <%= f.email_field :email %>
+   <div class="form-group">
+    <%= f.label :email, "メールアドレス" %><br>
+    <%= f.email_field :email, class: "form-control" %>
   </div>
-  <div>
-    <%= f.label :password, "パスワード" %>
-    <%= f.password_field :password %>
+   <div class="form-group">
+    <%= f.label :password, "パスワード" %><br>
+    <%= f.password_field :password, class: "form-control" %>
   </div>
 
-  <%= f.submit "ログイン" %>
+  <div class="user-actions">
+    <%= f.submit "ログイン", class: "btn" %>
+    <%= link_to '戻る', request.referer || root_path, class: "btn"  %>
+  </div>
 <% end %>
-<%= link_to '戻る', request.referer || root_path  %>
