@@ -2,22 +2,29 @@
 <%= render "shared/error_messages", object: @book %>
 <%= form_with model: @book, local: true, autocomplete: "off", data: { turbo: false } do |form| %>
 
-  <div>
-    <%= form.label :title, "書名" %>
-    <%= form.text_field :title %>
-
-    <%= form.label :author, "著者" %>
-    <%= form.text_field :author %>
-
-    <%= form.label :series_name, "シリーズ" %>
-    <%= form.text_field :series_name %>
-    <%= form.collection_select :series_id, @series, :id, :name, prompt: "選択してください" %>
-
-    <%= form.label :body, "説明" %>
-    <%= form.text_area :body %>
-
-    <%= form.label :rating, "評価" %>
-    <%= form.number_field :rating %>
+  <div class="form-group">
+    <%= form.label :title, "書名" %><br>
+    <%= form.text_field :title, class: "form-control" %>
   </div>
-  <%= form.submit "登録" %>
+  <div class="form-group">
+    <%= form.label :author, "著者" %><br>
+    <%= form.text_field :author, class: "form-control" %>
+  </div>
+  <div class="form-group">
+    <%= form.label :series_name, "シリーズ(新規作成)" %><br>
+    <%= form.text_field :series_name, class: "form-control" %><br>
+    <%= form.label :series_id, "シリーズ(既存)" %><br>
+    <%= form.collection_select :series_id, @series, :id, :name, { prompt: "選択してください" }, { class: "form-control" } %>
+  </div>
+   <div class="form-group">
+    <%= form.label :body, "説明" %><br>
+    <%= form.text_area :body, class: "form-control-body" %>
+  </div>
+   <div class="form-group">
+    <%= form.label :rating, "評価" %><br>
+    <%= form.number_field :rating, class: "form-control" %>
+  </div>
+  <div class="user-actions">
+  <%= form.submit "登録", class: "btn" %>
+  </div>
 <% end %>

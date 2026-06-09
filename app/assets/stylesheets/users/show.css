@@ -1,0 +1,6 @@
+/* アクションボタンの調整 */
+.user-actions {
+  margin-top: 16px;
+  border-top: 1px solid #eee;
+  padding-top: 16px;
+}

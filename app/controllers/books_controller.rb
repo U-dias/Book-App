@@ -24,7 +24,6 @@ class BooksController < ApplicationController
   end
 
   def create
-    @book = Book.new(book_params)
     @series = Series.all
 
     #書籍の新規登録
@@ -33,15 +32,6 @@ class BooksController < ApplicationController
       author: book_params[:author],
       series_id: book_params[:series_id])
 
-    # 登録済みの書籍
-    if @book.persisted?
-      flash.now[:alert] = "この本はすでに登録されています"
-      @series = Series.all
-      return render :new, status: :unprocessable_entity
-    end
-
-    if @book.new_record?
-      @book.assign_attributes(book_params)
       #シリーズの作成又は既存使用
       if params[:book][:series_name].present?
         @book.series = Series.find_or_create_by(name: params[:book][:series_name])
@@ -49,7 +39,6 @@ class BooksController < ApplicationController
         @book.series = Series.find(params[:book][:series_id])
       end
       return render :new unless @book.save
-    end
     current_user.ownerships.find_or_create_by(book: @book)
     redirect_to @book
   end

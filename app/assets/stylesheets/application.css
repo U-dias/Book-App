@@ -14,6 +14,24 @@
  *= require_self
  */
 
+/* headerの調整 */
+header {
+  padding: 12px 24px;
+  border-bottom: 1px solid #eee;
+}
+
+/* bodyの調整 */
+body {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* footerの調整 */
+footer {
+  padding: 12px 24px;
+}
+
 /* 書籍名の表示 */
 .books-list {
   display: flex;
@@ -23,11 +41,16 @@
 
 /* 書籍のカード化 */
 .book-card {
-  width: 150px;
-  padding: 8px;
+  height: 150px;
+  width: 140px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   border: 1px solid #ddd;
   border-radius: 8px;
   background: #fff;
+  padding: 0 12px;
+  text-align: left;
 }
 
 /* リンクの文字色の変更 */
@@ -37,7 +60,7 @@ a {
 }
 
 a:hover {
-  text-decoration: underline;
+  color: #007bff;
 }
 
 /* エラーメッセージの統一 */
@@ -47,4 +70,112 @@ a:hover {
   padding: 10px;
   border: 1px solid red;
   margin-bottom: 10px;
+}
+
+/* リンクのボタン化 */
+.link-btn {
+  display: inline-block;
+  padding: 8px 16px;
+  border: solid 1px black;
+  border-radius: 6px;
+  text-decoration: none;
+  color: rgb(117, 114, 114);
+  font-size: 14px;
+}
+
+/* 削除ボタン */
+.delete-btn {
+  display: inline-block;
+  padding: 8px 16px;
+  border: solid 1px black;
+  border-radius: 6px;
+  text-decoration: none;
+  color: rgb(117, 114, 114);
+  font-size: 14px;
+  background-color: white;
+}
+
+.delete-btn:hover {
+  color: #ff6060;
+  cursor: pointer;
+}
+
+/* ログアウトボタンの調整 */
+.logout-btn {
+  display: inline-block;
+  padding: 8px 16px;
+  border: solid 1px black;
+  border-radius: 6px;
+  text-decoration: none;
+  color: rgb(117, 114, 114);
+  font-size: 14px;
+  background-color: white;
+  margin-top: 10px;
+}
+
+.logout-btn:hover {
+  color: #007bff;
+  cursor: pointer;
+}
+
+/* buttonの見た目調整 */
+.btn {
+  display: inline-block;
+  padding: 8px 16px;
+  border: solid 1px black;
+  border-radius: 6px;
+  text-decoration: none;
+  color: rgb(117, 114, 114);
+  font-size: 14px;
+  background-color: white;
+}
+
+.btn:hover {
+  color: #007bff;
+  cursor: pointer;
+}
+
+/* タグ */
+.tag {
+  height: auto;
+  border: solid 1px grey;
+  border-radius: 999px;
+  background-color: white;
+  padding: 4px 8px;
+}
+
+/* 入力欄の調整 */
+input[type="title"],
+[type="author"],
+[type="series_name"],
+[type="rating"] {
+  width: 200px;
+  height: 20px;
+}
+
+input[tyoe="body"] {
+  width: 200px;
+  height: 100px;
+}
+
+label {
+  vertical-align: top;
+}
+
+.form-group {
+  margin-bottom: 10px;
+}
+
+.form-control {
+  width: 200px;
+  height: 20px;
+}
+
+.form-control-body {
+  width: 200px;
+  height: 100px;
+}
+
+select.form-control {
+  height: 25px;
 }
