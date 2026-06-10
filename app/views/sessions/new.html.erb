@@ -1,4 +1,4 @@
-<h1>Sessions#new</h1>
+<% content_for :title, "ユーザー登録" %>
 <h1>ログイン画面</h1>
 <%= render "shared/error_messages", object: @user %>
 <%= form_with url: session_path, scope: :user, autocomplete: "off", data: { turbo: false } do |f| %>

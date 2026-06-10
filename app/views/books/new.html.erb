@@ -1,3 +1,4 @@
+<% content_for :title, "新規書籍登録" %>
 <h1>新規書籍登録</h1>
 <%= render "shared/error_messages", object: @book %>
 <%= form_with model: @book, local: true, autocomplete: "off", data: { turbo: false } do |form| %>
@@ -22,9 +23,10 @@
   </div>
    <div class="form-group">
     <%= form.label :rating, "評価" %><br>
-    <%= form.number_field :rating, class: "form-control" %>
+    <%= form.number_field :rating, min: 1, max: 5, class: "form-control" %>
   </div>
   <div class="user-actions">
   <%= form.submit "登録", class: "btn" %>
+  <%= link_to '一つ前に戻る', request.referer || root_path, class: "link-btn"  %>
   </div>
 <% end %>
