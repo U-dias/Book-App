@@ -1,4 +1,5 @@
-<h1>書籍編集</h1>
+<% content_for :title, "本の編集" %>
+
 <%= render "shared/error_messages", object: @book %>
 <%= form_with model: @book, local: true, autocomplete: "off", data: { turbo: false } do |form| %>
 
@@ -24,7 +25,7 @@
   </div>
    <div class="form-group">
     <%= form.label :rating, "評価" %><br>
-    <%= form.number_field :rating, class: "form-control" %>
+    <%= form.number_field :rating, min: 1, max: 5, class: "form-control" %>
   </div>
    <div class="form-group">
     <%= form.label :status, "ステータス" %><br>
