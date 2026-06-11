@@ -1,24 +1,37 @@
-# README
+書籍管理アプリ
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+▫️アプリ概要  
+書籍を管理する為のwebアプリです。   
+本の登録やシリーズ管理、読書履歴の管理ができます。  
 
-Things you may want to cover:
+▫️作成の背景  
+所有している書籍が増えすぎて管理しきれなくなったため作成しました。  
+また、読書の傾向を可視化することで、今後購入する書籍選びの参考にすることを目的としています。  
 
-* Ruby version
+▫️本番環境  
+https://book-app-2-vmsy.onrender.com/session/new  
 
-* System dependencies
+▫️主な機能  
+・ユーザー機能/ログイン機能  
+・書籍の登録、編集、削除  
+・シリーズ管理（新規作成、既存選択、単巻対応）  
+・タグ機能  
+・検索機能（フリーワード、タグ）  
+・読書履歴の記録  
 
-* Configuration
+▫️使用技術  
+・Ruby on Rails  
+・PostgreSQL  
+・Docker（開発環境）  
+・Render（本番環境）  
 
-* Database creation
+▫️工夫した点  
+・ゲストユーザー機能を実装し、ログインなしでもアプリを体験できるようにした  
+・ゲストユーザーには編集機能やマイページ機能を制限し、権限管理を行った  
+・シリーズ未選択時は単巻として扱う設計にし、データはnilで管理・表示は「単巻」とした  
+・入力エラー時に該当フォームをハイライトし、ユーザーがどこを修正すべきか分かりやすくした  
 
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+▫️今後の改善点  
+・UIの改善  
+・検索機能の強化  
+・テストコードの追加
