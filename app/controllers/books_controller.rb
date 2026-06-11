@@ -33,14 +33,25 @@ class BooksController < ApplicationController
       series_id: book_params[:series_id])
 
       #シリーズの作成又は既存使用
-      if params[:book][:series_name].present?
-        @book.series = Series.find_or_create_by(name: params[:book][:series_name])
-      elsif params[:book][:series_id].present?
-        @book.series = Series.find(params[:book][:series_id])
-      end
+      series_name = params[:book][:series_name].presence
+      series_id   = params[:book][:series_id].presence
+
+      series =
+        if series_name.present?
+          Series.find_or_create_by(name: series_name.strip)
+        elsif series_id.present?
+          Series.find_by(id: series_id)
+        else
+          nil
+        end
+      @book = Book.find_or_initialize_by(
+        title: book_params[:title],
+        author: book_params[:author],
+        series: series
+      )
       return render :new unless @book.save
-    current_user.ownerships.find_or_create_by(book: @book)
-    redirect_to @book
+      current_user.ownerships.find_or_create_by(book: @book)
+      redirect_to @book
   end
 
   def show

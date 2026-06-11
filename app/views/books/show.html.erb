@@ -2,7 +2,7 @@
 <div>
 <p>書籍名：<%= @book.title %></p>
 <p>著者：<%= @book.author %></p>
-<p>シリーズ：<%= @book.series&.name %></p>
+<p>シリーズ：<%= @book.series&.name || "単巻" %></p>
 <p>評価：<%= @book.rating %></p>
 <p>内容：<%= @book.body %></p>
 <% if @ownership.present? %>

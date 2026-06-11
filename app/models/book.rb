@@ -1,5 +1,5 @@
 class Book < ApplicationRecord
-  belongs_to :series
+  belongs_to :series, optional: true
 
   has_many :book_tags, dependent: :destroy
   has_many :tags, through: :book_tags
@@ -9,6 +9,5 @@ class Book < ApplicationRecord
 
   validates :title, presence: true
   validates :author, presence: true
-  validates :series_id, presence: true
   validates :title, uniqueness: { scope: [:author, :series_id] }
 end

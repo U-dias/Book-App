@@ -12,10 +12,13 @@
     <%= form.text_field :author, class: "form-control" %>
   </div>
   <div class="form-group">
-    <%= form.label :series_name, "シリーズ(新規作成)" %><br>
+    <%= form.label :series_name, "シリーズ名（新規作成する場合）" %><br>
     <%= form.text_field :series_name, class: "form-control" %><br>
-    <%= form.label :series_id, "シリーズ(既存)" %><br>
-    <%= form.collection_select :series_id, @series, :id, :name, { prompt: "選択してください" }, { class: "form-control" } %>
+
+    <%= form.label :series_id, "既存シリーズ（なければ未選択）" %><br>
+    <%= form.collection_select :series_id, @series, :id, :name,
+      { include_blank: "単巻（シリーズなし）" },
+      { class: "form-control" } %>
   </div>
    <div class="form-group">
     <%= form.label :body, "説明" %><br>
