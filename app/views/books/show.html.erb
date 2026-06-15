@@ -12,6 +12,12 @@
       <span class="tag" ><%= tag.name %></span>
     <% end %>
   <% end %>
+  <% if @book.cover_image.attached? %>
+    <div class="cover-image">
+       <h3>表紙画像</h3>
+       <%= image_tag @book.cover_image, style: "max-width: 200px; max-height: 300px;" %>
+    </div>
+  <% end %>
 </div>
 <div class="user-actions">
   <%= button_to "削除",

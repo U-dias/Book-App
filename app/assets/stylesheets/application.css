@@ -190,3 +190,8 @@ label {
 select.form-control {
   height: 25px;
 }
+
+/* カバー画像 */
+.cover-image {
+  margin-top: 10px;
+}
