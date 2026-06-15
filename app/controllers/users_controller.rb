@@ -1,7 +1,6 @@
 class UsersController < ApplicationController
   skip_before_action :require_login, only: [:new, :create]
-  before_action :restrict_guest, only: [:edit, :update, :destroy, :show, :new]
-
+  
   def new
     @user = User.new
   end
@@ -22,7 +21,6 @@ class UsersController < ApplicationController
     @read_histories = current_user.read_histories.includes(:book).order(created_at: :desc)
 
     #続きの書籍の表示
-    @user = current_user
     @reading_books = current_user.ownerships.where(status: "reading").limit(5)
     @unread_books  = current_user.ownerships.where(status: "unread").limit(5)
   end
@@ -32,25 +30,35 @@ class UsersController < ApplicationController
   end
 
   def update
-    @user = current_user
-    if @user.update(user_params)
-      redirect_to user_path(@user), notice: "更新しました。"
-    else
-      flash.now[:alert] = "更新に失敗しました。"
-      render :edit
-    end
+    return redirect_to user_path(current_user), alert: "ゲストユーザーは変更できません" if current_user.guest?
+    
+      @user = current_user
+      if @user.update(user_params)
+        redirect_to user_path(@user), notice: "更新しました。"
+      else
+        flash.now[:alert] = "更新に失敗しました。"
+        render :edit
+      end
   end
 
   def destroy
-    current_user.destroy
-    reset_session
-    redirect_to root_path, notice: "削除しました。"
+    if current_user.guest?
+      redirect_to user_path(current_user), alert: "ゲストユーザーは削除できません"
+    else
+      current_user.destroy
+      reset_session
+      redirect_to root_path, notice: "削除しました。"
+    end
   end
 
   private
 
   def user_params
-    params.require(:user).permit(:user_name, :email, :password)
+    params.require(:user).permit(:user_name, :email, :password).tap do |user_params|
+      if user_params[:password].blank?
+        user_params.delete(:password)
+      end
+    end
   end
 end
 

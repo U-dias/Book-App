@@ -7,7 +7,7 @@ class User < ApplicationRecord
   #バリデーション
   validates :email, presence: true, uniqueness: true
   validates :user_name, presence: true, uniqueness: true
-  validates :password, length: { minimum: 6 }, presence: true
+  validates :password, length: { minimum: 6 }, presence: true, on: :create
 
   # ゲストユーザー判定
   def guest?

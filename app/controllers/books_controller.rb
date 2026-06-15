@@ -1,12 +1,9 @@
 class BooksController < ApplicationController
-  before_action :restrict_guest, only: [:edit, :update, :destroy, :new, :create]
+  before_action :restrict_guest, only: [:destroy]
 
   def index
-    @ownerships = if current_user&.guest?
-      Ownership.includes(:book).all
-    else
-      current_user.ownerships.includes(:book)
-    end
+    @ownerships = current_user.ownerships.includes(:book)
+
     #キーワード検索
     if params[:keyword].present?
     @ownerships = @ownerships.joins(:book)
@@ -114,9 +111,13 @@ class BooksController < ApplicationController
   end
 
   def destroy
-    @book = Book.find(params[:id])
-    @book.destroy
-    redirect_to books_path
+    @book = current_user.books.find_by(params[:id])
+    if current_user.guest?
+      redirect_to books_path, notice: "削除しました（ゲストユーザーのため実際には削除されていません）"
+    else
+      @book.destroy
+      redirect_to books_path, notice: "削除しました"
+    end
   end
 
   private

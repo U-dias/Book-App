@@ -25,6 +25,8 @@ body {
   max-width: 1000px;
   margin: 0 auto;
   padding: 0 16px;
+  background-color: #f8f9fa;
+  font-family: sans-serif;
 }
 
 /* footerの調整 */
@@ -53,14 +55,16 @@ footer {
   text-align: left;
 }
 
+.book-card:hover {
+  opacity: 1.0;
+  transform: translateY(-3px);
+}
+
+
 /* リンクの文字色の変更 */
 a {
   text-decoration: none;
   color: inherit;
-}
-
-a:hover {
-  color: #007bff;
 }
 
 /* エラーメッセージの統一 */
@@ -73,7 +77,7 @@ a:hover {
 }
 
 /* リンクのボタン化 */
-.link-btn {
+.btn {
   display: inline-block;
   padding: 8px 16px;
   border: solid 1px black;
@@ -81,6 +85,26 @@ a:hover {
   text-decoration: none;
   color: rgb(117, 114, 114);
   font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn:hover {
+  opacity: 0.8;
+  transform: translateY(-3px);
+  cursor: pointer;
+}
+
+/* 移動ボタン */
+.move-btn {
+  background-color: #f99716;
+  color: white;
+}
+
+/* 編集ボタン */
+.edit-btn {
+  background-color: #91eb6a;
+  color: white;
 }
 
 /* 削除ボタン */
@@ -90,49 +114,36 @@ a:hover {
   border: solid 1px black;
   border-radius: 6px;
   text-decoration: none;
-  color: rgb(117, 114, 114);
   font-size: 14px;
-  background-color: white;
+  background-color: #dc3545;
+  color: white;
+  margin-top: 10px;
 }
 
-.delete-btn:hover {
-  color: #ff6060;
-  cursor: pointer;
-}
-
-/* ログアウトボタンの調整 */
+/* ログアウトボタン */
 .logout-btn {
   display: inline-block;
   padding: 8px 16px;
   border: solid 1px black;
   border-radius: 6px;
   text-decoration: none;
-  color: rgb(117, 114, 114);
   font-size: 14px;
-  background-color: white;
   margin-top: 10px;
+  background-color: #2ef7e0;
+  color: white;
 }
 
-.logout-btn:hover {
-  color: #007bff;
-  cursor: pointer;
-}
-
-/* buttonの見た目調整 */
-.btn {
+/* ゲストログインボタン */
+.guest-login-btn {
   display: inline-block;
   padding: 8px 16px;
   border: solid 1px black;
   border-radius: 6px;
   text-decoration: none;
-  color: rgb(117, 114, 114);
   font-size: 14px;
-  background-color: white;
-}
-
-.btn:hover {
-  color: #007bff;
-  cursor: pointer;
+  margin-top: 10px;
+  background-color: #91eb6a;
+  color: white;
 }
 
 /* タグ */
