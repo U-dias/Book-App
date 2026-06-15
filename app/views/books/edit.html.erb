@@ -41,8 +41,9 @@
     <%= form.label :tag_name, "タグ（新規入力）" %><br>
     <%= form.text_field :tag_name, class: "form-control" %>
   </div>
-  <div>
-    <%= form.file_field :cover_image %>
+  
+  <div class="form-group">
+    <%= form.file_field :cover_image, class: "cover-image-form" %>
   </div>
   <div class="user-actions">
   <%= form.submit "更新", class: "btn edit-btn" %>

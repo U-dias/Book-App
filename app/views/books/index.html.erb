@@ -13,8 +13,15 @@
 <div class="books-list" >
   <% @ownerships.each do |ownership| %>
     <%= link_to book_path(ownership.book), class: "book-card" do %>
-      <p class="book-title"><%= ownership.book.title %></p>
-      <p class="book-title"><%= ownership.book.author %></p>
+      <% if ownership.book.cover_image.attached? %>
+        <%= image_tag ownership.book.cover_image, class: "card-background" %>
+      <% else %>
+        <%= image_tag "default_book.png", class: "card-background" %>
+      <% end %>
+      <div class="card-content">
+        <p class="book-title"><%= ownership.book.title %></p>
+        <p class="book-title"><%= ownership.book.author %></p>
+      </div>
     <% end %>
   <% end %>
 </div>

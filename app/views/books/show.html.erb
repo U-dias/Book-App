@@ -12,12 +12,15 @@
       <span class="tag" ><%= tag.name %></span>
     <% end %>
   <% end %>
-  <% if @book.cover_image.attached? %>
-    <div class="cover-image">
-       <h3>表紙画像</h3>
-       <%= image_tag @book.cover_image, style: "max-width: 200px; max-height: 300px;" %>
-    </div>
-  <% end %>
+  <div class="cover-image">
+    <h3>表紙画像</h3>
+      <% if @book.cover_image.attached? %>
+        <%= image_tag @book.cover_image.variant(resize_to_fit: [100, 100]) %>
+      <% else %>
+        <%= image_tag "default_book.png", size: "100x100" %>
+       <p>表紙画像は未登録です</p>
+      <% end %>
+  </div>
 </div>
 <div class="user-actions">
   <%= button_to "削除",

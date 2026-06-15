@@ -9,3 +9,9 @@
   display: inline-block;
   margin: 0;
 }
+
+/* 表示画像 */
+.cover_preview {
+  width: 50px;
+  height: auto;
+}

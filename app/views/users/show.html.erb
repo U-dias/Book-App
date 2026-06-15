@@ -4,8 +4,15 @@
 <div class= "books-list">
   <% @read_histories.each do |history| %>
     <%= link_to book_path(history.book), class: "book-card" do %>
-      <p><%= history.book.title %></p>
-      <p><%= history.book.author %></p>
+      <% if history.book.cover_image.attached? %>
+        <%= image_tag history.book.cover_image, class: "card-background" %>
+      <% else %>
+        <%= image_tag "default_book.png", class: "card-background" %>
+      <% end %>
+      <div class="card-content">
+        <p><%= history.book.title %></p>
+        <p><%= history.book.author %></p>
+      </div>
     <% end %>
   <% end %>
 </div>
@@ -13,8 +20,15 @@
 <div class= "books-list">
   <% @reading_books.each do |ownership| %>
     <%= link_to book_path(ownership.book), class: "book-card" do %>
-      <p><%= ownership.book.title %></p>
-      <p><%= ownership.book.author %></p>
+      <% if ownership.book.cover_image.attached? %>
+        <%= image_tag ownership.book.cover_image, class: "card-background" %>
+      <% else %>
+        <%= image_tag "default_book.png", class: "card-background" %>
+      <% end %>
+      <div class="card-content">
+        <p><%= ownership.book.title %></p>
+        <p><%= ownership.book.author %></p>
+      </div>
     <% end %>
   <% end %>
 </div>
@@ -22,14 +36,21 @@
 <div class= "books-list">
   <% @unread_books.each do |ownership| %>
     <%= link_to book_path(ownership.book), class: "book-card" do %>
-      <p><%= ownership.book.title %></p>
-      <p><%= ownership.book.author %></p>
+      <% if ownership.book.cover_image.attached? %>
+        <%= image_tag ownership.book.cover_image, class: "card-background" %>
+      <% else %>
+        <%= image_tag "default_book.png", class: "card-background" %>
+      <% end %>
+      <div class="card-content">
+        <p><%= ownership.book.title %></p>
+        <p><%= ownership.book.author %></p>
+      </div>
     <% end %>
   <% end %>
 </div>
 <div class="user-actions">
-  <%= link_to "新規登録", new_book_path, class: "btn move-btn" %>
-  <%= link_to "プロフィール編集", edit_user_path(current_user), class: "btn move-btn" %>
+<%= link_to "新規登録", new_book_path, class: "btn edit-btn" %>
+<%= link_to "プロフィール編集", edit_user_path(current_user), class: "btn edit-btn" %>
 </div>
 
 
