@@ -1,3 +1,19 @@
+/* ページ全体のスタイル */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.new-page .form-group.rating {
+  height: auto;
+}
+
+.form-group-image-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
 /* アクションボタンの調整 */
 .user-actions {
   margin-top: 16px;

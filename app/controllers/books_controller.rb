@@ -41,11 +41,10 @@ class BooksController < ApplicationController
         else
           nil
         end
-      @book = Book.find_or_initialize_by(
-        title: book_params[:title],
-        author: book_params[:author],
-        series: series
-      )
+      # 画像の登録
+      if params[:book][:cover_image].present?
+        @book.cover_image.attach(params[:book][:cover_image])
+      end
       return render :new unless @book.save
       current_user.ownerships.find_or_create_by(book: @book)
       redirect_to @book
@@ -103,9 +102,15 @@ class BooksController < ApplicationController
     if @book.save
       ownership = current_user.ownerships.find_by(book_id: @book.id)
       ownership.update(status: params[:book][:status])
-      redirect_to book_path(@book)
+
+    # 画像の更新
+      if params[:book][:cover_image].present?
+        @book.cover_image.purge
+        @book.cover_image.attach(params[:book][:cover_image])
+      end
+      redirect_to @book, notice: "更新しました"
     else
-      @series = Series.all
+      flash.now[alert] = "更新に失敗しました。"
       render :edit
     end
   end

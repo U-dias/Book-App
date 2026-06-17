@@ -12,15 +12,14 @@
       <span class="tag" ><%= tag.name %></span>
     <% end %>
   <% end %>
-  <div class="cover-image">
-    <h3>表紙画像</h3>
-      <% if @book.cover_image.attached? %>
-        <%= image_tag @book.cover_image.variant(resize_to_fit: [100, 100]) %>
-      <% else %>
-        <%= image_tag "default_book.png", size: "100x100" %>
-       <p>表紙画像は未登録です</p>
-      <% end %>
-  </div>
+  <p>表紙画像</p>
+    <div class="form-group-image-row">
+      <div class="upload-image">
+        <div class="cover-preview">
+          <img id="preview" src="<%= @book.cover_image.attached? ? url_for(@book.cover_image) : asset_path('default_book.png') %>" width="100">
+        </div>
+      </div>
+    </div>
 </div>
 <div class="user-actions">
   <%= button_to "削除",
