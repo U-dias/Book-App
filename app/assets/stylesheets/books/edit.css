@@ -1,16 +1,61 @@
-/* 更新ボタン */
-.submit-btn {
-  display: inline-block;
-  padding: 8px 16px;
-  border: solid 1px black;
-  border-radius: 6px;
-  text-decoration: none;
-  color: rgb(117, 114, 114);
-  font-size: 14px;
-  background-color: white;
+/* ページ全体のスタイル */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
 }
 
-.submit-btn:hover {
-  color: #007bff;
+.edit-page .form-group.rating {
+  height: auto;
+}
+
+.form-group-image-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* 書籍画像 */
+.cover-preview {
+  margin-top: 10px;
+  display: flex;
+  width: 150px;
+  height: 200px;
+  overflow: hidden;
+}
+
+.cover-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.edit-page .cover-preview img {
+  display: block;
+  border-radius: 4px;
+}
+
+/* 画像選択部分 */
+.hidden-file {
+  display: none;
+}
+
+.custom-file-btn {
+  display: inline-block;
+  background: #f0b349;
+  color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
   cursor: pointer;
+  margin-right: 10px;
+}
+
+.custom-file-btn:hover {
+  opacity: 1.0;
+  transform: translateY(-3px);
+}
+
+.edit-page .upload-image {
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }

@@ -1,17 +1,17 @@
 <header>
-  <%= link_to "トップ", root_path, class: "btn" %>
+  <%= link_to "トップ", root_path, class: "btn move-btn" %>
 
   <% if current_user %>
-    <%= link_to "マイページ", user_path(current_user), class: "link-btn" %>
+    <%= link_to "マイページ", user_path(current_user), class: "btn move-btn" %>
     <span>ログイン中: <%= current_user.user_name %></span>
-    <%= button_to "ログアウト", logout_path, method: :delete, class: "logout-btn" %>
+    <%= button_to "ログアウト", logout_path, method: :delete, class: "btn logout-btn" %>
   <% else %>
     <% unless current_page?(new_session_path) %>
-      <%= link_to "ログイン", new_session_path, class: "link-btn" %>
+      <%= link_to "ログイン", new_session_path, class: "btn move-btn" %>
     <% end %>
     <% unless current_page?(new_user_path) %>
-      <%= link_to "新規登録", new_user_path , class: "link-btn"%>
+      <%= link_to "新規登録", new_user_path , class: "btn move-btn"%>
     <% end %>
-    <%= button_to "ゲストログイン", guest_login_path, method: :post, class: "btn" %>
+    <%= button_to "ゲストログイン", guest_login_path, method: :post, class: "btn guest-login-btn" %>
   <% end %>
 </header>

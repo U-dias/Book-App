@@ -3,45 +3,58 @@
 <%= render "shared/error_messages", object: @book %>
 <%= form_with model: @book, local: true, autocomplete: "off", data: { turbo: false } do |form| %>
 
+<div class="form-grid">
   <div class="form-group">
     <%= form.label :title, "書名" %><br>
     <%= form.text_field :title, class: "form-control #('field-with-error' if @book.errors[:title].any?)" %>
   </div>
-   <div class="form-group">
-    <%= form.label :author, "著者" %><br>
-    <%= form.text_field :author, class: "form-control # ('field-with-error' if @book.errors[:author].any?)" %>
-  </div>
-   <div class="form-group">
-    <%= form.label :series_name, "シリーズ(新規作成)" %><br>
-    <%= form.text_field :series_name, class: "form-control" %>
-  </div>
-   <div class="form-group">
-    <%= form.label :series_id, "シリーズ(既存)" %><br>
-    <%= form.collection_select :series_id, @series, :id, :name, { prompt: "選択してください" }, { class: "form-control" } %>
-  </div>
-   <div class="form-group">
-    <%= form.label :body, "説明" %><br>
-    <%= form.text_area :body, class: "form-control-body" %>
-  </div>
-   <div class="form-group">
+  <div class="form-group">
     <%= form.label :rating, "評価" %><br>
     <%= form.number_field :rating, min: 1, max: 5, class: "form-control" %>
   </div>
-   <div class="form-group">
+  <div class="form-group">
+    <%= form.label :author, "著者" %><br>
+    <%= form.text_field :author, class: "form-control # ('field-with-error' if @book.errors[:author].any?)" %>
+  </div>
+  <div class="form-group">
+    <%= form.label :tag_ids, "タグ（選択）" %><br>
+    <%= form.collection_check_boxes :tag_ids, Tag.all, :id, :name, class: "form-control" %><br>
+    <%= form.label :tag_name, "タグ（新規入力）" %><br>
+    <%= form.text_field :tag_name, class: "form-control" %>
+  </div>
+  <div class="form-group">
+    <%= form.label :series_name, "シリーズ(新規作成)" %><br>
+    <%= form.text_field :series_name, class: "form-control" %><br>
+    <%= form.label :series_id, "シリーズ(既存)" %><br>
+    <%= form.collection_select :series_id, @series, :id, :name, { prompt: "選択してください" }, { class: "form-control" } %>
+  </div>
+  <div class="form-group">
     <%= form.label :status, "ステータス" %><br>
     <%= form.select :status, Ownership.statuses.keys.map { |key| [I18n.t("enums.ownership.status.#{key}"), key] },
   {},
   { class: "form-control" } %>
   </div>
-   <div class="form-group">
-    <%= form.label :tag_ids, "タグ（選択）" %><br>
-    <%= form.collection_check_boxes :tag_ids, Tag.all, :id, :name, class: "form-control" %>
+  <div class="form-group">
+    <%= form.label :body, "説明" %><br>
+    <%= form.text_area :body, class: "form-control-body" %>
   </div>
-   <div class="form-group">
-    <%= form.label :tag_name, "タグ（新規入力）" %><br>
-    <%= form.text_field :tag_name, class: "form-control" %>
+  
+  <div class="form-group-image-row">
+    <div class="upload-image">
+      <div class="cover-preview">
+        <img id="preview" src="<%= @book.cover_image.attached? ? url_for(@book.cover_image) : asset_path('default_book.png') %>" width="100">
+      </div>
+    </div>
+    <div class="upload-form">
+      <%= form.file_field :cover_image, id: "image_input", class: "hidden-file" %>
+      <label for="image_input" class="btn edit-btn">
+        画像を選択
+      </label>
+    </div>
   </div>
+</div>
   <div class="user-actions">
-  <%= form.submit "更新", class: "submit-btn" %>
+  <%= form.submit "更新", class: "btn edit-btn" %>
+  <%= link_to '一覧に戻る', books_path, class: "btn move-btn" %>
   </div>
 <% end %>
