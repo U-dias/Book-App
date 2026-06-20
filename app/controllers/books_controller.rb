@@ -6,15 +6,16 @@ class BooksController < ApplicationController
 
   def index
     @ownerships = current_user.ownerships.includes(:book)
-    @total_books = @ownerships.count
     #キーワード検索
     if params[:keyword].present?
     @ownerships = @ownerships.joins(:book)
       .where("books.title LIKE ? OR books.author LIKE ?", "%#{params[:keyword]}%", "%#{params[:keyword]}%")
+    @total_books = @ownerships.count
     end
     #タグ検索
     if params[:tag_ids].present?
     @ownerships = @ownerships.joins(book: :tags).where(tags: { id: params[:tag_ids] })
+    @total_books = @ownerships.count
     end
   end
 
@@ -23,41 +24,46 @@ class BooksController < ApplicationController
     @series = Series.all
   end
 
-  def create
-    @series = Series.all
+def create
+  Rails.logger.debug params.inspect
+  @series = Series.all
 
-      #シリーズの作成又は既存使用
-      series_name = params[:book][:series_name].presence
-      series_id   = params[:book][:series_id].presence
+  series_name = params[:book][:series_name].presence
+  series_id   = params[:book][:series_id].presence
 
-      series =
-        if series_name.present?
-          Series.find_or_create_by(name: series_name.strip)
-        elsif series_id.present?
-          Series.find_by(id: series_id)
-        else
-          nil
-        end
+  series =
+    if series_name.present?
+      Series.find_or_create_by(name: series_name.strip)
+    elsif series_id.present?
+      Series.find_by(id: series_id)
+    end
+    @book = Book.find_by(google_books_id: book_params[:google_books_id])
 
-        @book = Book.find_or_create_by(
-          title: book_params[:title].strip,
-          author: book_params[:author].strip
-        )
+    if @book
+      flash[:alert] = "すでに登録されています"
+    else
+      @book = Book.new(
+        title: book_params[:title].strip,
+        author: book_params[:author].strip,
+        google_books_id: book_params[:google_books_id], 
+        series: series
+      )
 
-        unless @book
-          @book = Book.new(book_params)
-          @book.series = series if series
+      if params[:book][:cover_image].present?
+        @book.cover_image.attach(params[:book][:cover_image])
+      end
 
-          # 画像の登録
-          if params[:book][:cover_image].present?
-            @book.cover_image.attach(params[:book][:cover_image])
-          end
-          return render :new unless @book.save
-        end
+      if @book.save!
+      flash[:notice] = "登録しました"
+      else
+        Rails.logger.debug @book.errors.full_messages
+  flash[:alert] = @book.errors.full_messages.join(", ")
+      end
+    end
 
-      current_user.ownerships.find_or_create_by(book: @book)
-      redirect_to @book
-  end
+  current_user.ownerships.find_or_create_by(book: @book)
+  redirect_to @book
+end
 
   def show
     @book = Book.find(params[:id])
@@ -77,6 +83,7 @@ class BooksController < ApplicationController
     @continuation = current_user.ownerships
       .where(status: [:unread, :reading])
       .limit(5)
+    
   end
 
   def edit
@@ -128,7 +135,6 @@ class BooksController < ApplicationController
     keyword = params[:keyword]
     limit = (params[:limit] || 10).to_i
     page = (params[:page] || 1).to_i
-    @total_count = response["totalItems"] 
 
     start_index = (page - 1) * limit
     if keyword.present?
@@ -144,6 +150,7 @@ class BooksController < ApplicationController
 
       if response.code == 200
         @books = response.parsed_response["items"] || []
+        @total_count = response["totalItems"] 
         @page = page
         @limit = limit
         @keyword = keyword
@@ -168,35 +175,41 @@ class BooksController < ApplicationController
   end
   
 
- def register
-    book_params = params[:book]
+def register
+  book_params = params[:book]
 
-    author = book_params[:author].presence || "不明"
+  book = Book.find_by(google_books_id: book_params[:google_books_id])
 
-    book = Book.find_or_create_by(
+  if book
+    flash[:alert] = "すでに登録されています"
+  else
+    book = Book.new(
       title: book_params[:title],
-      author: author
+      author: book_params[:author].presence || "不明",
+      google_books_id: book_params[:google_books_id]
     )
-    if book.persisted? && book.cover_image.blank?
-      if book_params[:image_url].present?
-        file = URI.open(book_params[:image_url])
-        book.cover_image.attach(io: file, filename: "book.jpg")
-      end
-    end
-    unless book.persisted?
-      redirect_to books_path, alert: "本の保存に失敗しました"
-      return
+
+    if book_params[:image_url].present?
+      file = URI.open(book_params[:image_url])
+      book.cover_image.attach(io: file, filename: "book.jpg")
     end
 
-    book.update(body: book_params[:description]) if book.body.blank?
+    book.body = book_params[:description] if book.body.blank?
 
-    current_user.ownerships.find_or_create_by(book: book)
+    unless book.save
+      flash[:alert] = book.errors.full_messages.join(", ")
+      redirect_to books_path and return
+    end
 
-    redirect_to books_path, notice: "登録しました"
+    flash[:notice] = "登録しました"
   end
 
+  current_user.ownerships.find_or_create_by(book: book)
+  redirect_to books_path
+end
+
   def destroy
-    @book = current_user.books.find_by(params[:id])
+    @book = current_user.books.find_by(id: params[:id])
     if current_user.guest?
       redirect_to books_path, notice: "削除しました（ゲストユーザーのため実際には削除されていません）"
     else
@@ -208,7 +221,7 @@ class BooksController < ApplicationController
   private
   def book_params
     params.require(:book).permit(
-      :title, :author, :series_id, :body, :status, :rating, :cover_image,
+      :title, :author, :series_id, :body, :status, :rating, :cover_image,:google_books_id,
     tag_ids: [])
   end
 

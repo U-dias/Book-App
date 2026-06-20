@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_06_15_141249) do
+ActiveRecord::Schema[7.1].define(version: 2026_06_20_064225) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -61,6 +61,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_06_15_141249) do
     t.text "body"
     t.integer "rating"
     t.integer "status"
+    t.string "google_books_id"
     t.index ["series_id"], name: "index_books_on_series_id"
   end
 

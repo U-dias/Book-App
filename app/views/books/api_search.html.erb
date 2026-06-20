@@ -30,9 +30,9 @@
   <% else %>
     <P>見つかりませんでした</p>
   <% end %>
-  <% if @page > 1 %>
-    <%= link_to "前へ", api_search_books_path(keyword: @keyword, page: @page - 1, limit: @limit) %>
+  <% if @page.to_i > 1 %>
+    <%= link_to "前へ", api_search_books_path(keyword: @keyword, page: @page - 1, limit: @limit), class: "btn move-btn" %>
   <% end %>
 
-  <%= link_to "次へ", api_search_books_path(keyword: @keyword, page: @page + 1, limit: @limit) %>
+  <%= link_to "次へ", api_search_books_path(keyword: @keyword, page: @page + 1, limit: @limit), class: "btn move-btn" %>
 </div>
