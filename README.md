@@ -63,23 +63,23 @@ https://book-app-2-vmsy.onrender.com/session/new
 ▫️アプリ画面
 ・書籍一覧（index）
 - 検索・一覧表示を統合し、ユーザーが直感的に目的の書籍へアクセスできるよう設計しています。
-![書籍一覧画面](./assets/images/index.png)
+![書籍一覧画面](./app/assets/images/index.png)
 
 ・検索機能（search）
 - フリーワードおよびタグ検索により、目的の書籍を効率的に絞り込めます。
-![検索画面](./assets/images/search.png)
+![検索画面](./app/assets/images/search.png)
 
 ・外部API検索（api-search）
 - 外部APIを利用し、書籍情報を取得できる検索機能を実装しています。
-![API検索画面](./assets/images/api-search.png)
+![API検索画面](./app/assets/images/api-search.png)
 
 ・書籍詳細（show）
 - 書籍の詳細情報、シリーズ、タグなどを確認できます。
-![書籍詳細画面](./assets/images/show.png)
+![書籍詳細画面](./app/assets/images/show.png)
 
 ・書籍編集（edit）
 - 登録済み書籍の情報を編集できます。
-![書籍詳細画面](./assets/images/edit.png)
+![書籍詳細画面](./app/assets/images/edit.png)
 
 ▫️今後の改善予定
 - UIデザインの改善
