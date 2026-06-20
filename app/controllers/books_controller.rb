@@ -1,17 +1,21 @@
 class BooksController < ApplicationController
   before_action :restrict_guest, only: [:destroy]
+  require 'net/http'
+  require 'json'
+  require 'open-uri'
 
   def index
     @ownerships = current_user.ownerships.includes(:book)
-
     #キーワード検索
     if params[:keyword].present?
     @ownerships = @ownerships.joins(:book)
       .where("books.title LIKE ? OR books.author LIKE ?", "%#{params[:keyword]}%", "%#{params[:keyword]}%")
+    @total_books = @ownerships.count
     end
     #タグ検索
     if params[:tag_ids].present?
     @ownerships = @ownerships.joins(book: :tags).where(tags: { id: params[:tag_ids] })
+    @total_books = @ownerships.count
     end
   end
 
@@ -20,35 +24,46 @@ class BooksController < ApplicationController
     @series = Series.all
   end
 
-  def create
-    @series = Series.all
+def create
+  Rails.logger.debug params.inspect
+  @series = Series.all
 
-    #書籍の新規登録
-    @book = Book.find_or_initialize_by(
-      title: book_params[:title],
-      author: book_params[:author],
-      series_id: book_params[:series_id])
+  series_name = params[:book][:series_name].presence
+  series_id   = params[:book][:series_id].presence
 
-      #シリーズの作成又は既存使用
-      series_name = params[:book][:series_name].presence
-      series_id   = params[:book][:series_id].presence
+  series =
+    if series_name.present?
+      Series.find_or_create_by(name: series_name.strip)
+    elsif series_id.present?
+      Series.find_by(id: series_id)
+    end
+    @book = Book.find_by(google_books_id: book_params[:google_books_id])
 
-      series =
-        if series_name.present?
-          Series.find_or_create_by(name: series_name.strip)
-        elsif series_id.present?
-          Series.find_by(id: series_id)
-        else
-          nil
-        end
-      # 画像の登録
+    if @book
+      flash[:alert] = "すでに登録されています"
+    else
+      @book = Book.new(
+        title: book_params[:title].strip,
+        author: book_params[:author].strip,
+        google_books_id: book_params[:google_books_id], 
+        series: series
+      )
+
       if params[:book][:cover_image].present?
         @book.cover_image.attach(params[:book][:cover_image])
       end
-      return render :new unless @book.save
-      current_user.ownerships.find_or_create_by(book: @book)
-      redirect_to @book
-  end
+
+      if @book.save!
+      flash[:notice] = "登録しました"
+      else
+        Rails.logger.debug @book.errors.full_messages
+  flash[:alert] = @book.errors.full_messages.join(", ")
+      end
+    end
+
+  current_user.ownerships.find_or_create_by(book: @book)
+  redirect_to @book
+end
 
   def show
     @book = Book.find(params[:id])
@@ -68,6 +83,7 @@ class BooksController < ApplicationController
     @continuation = current_user.ownerships
       .where(status: [:unread, :reading])
       .limit(5)
+    
   end
 
   def edit
@@ -115,8 +131,85 @@ class BooksController < ApplicationController
     end
   end
 
+  def api_search
+    keyword = params[:keyword]
+    limit = (params[:limit] || 10).to_i
+    page = (params[:page] || 1).to_i
+
+    start_index = (page - 1) * limit
+    if keyword.present?
+      response = HTTParty.get(
+        "https://www.googleapis.com/books/v1/volumes",
+        query: {
+          q: keyword,
+          key: ENV["GOOGLE_BOOKS_API_KEY"],
+          maxResults: limit,
+          startIndex: start_index
+        }
+      )
+
+      if response.code == 200
+        @books = response.parsed_response["items"] || []
+        @total_count = response["totalItems"] 
+        @page = page
+        @limit = limit
+        @keyword = keyword
+      else
+        @books = []
+        flash.now[:alert] = "検索に失敗しました"
+      end
+    else
+      @books = []
+    end
+  end
+
+  def api_show
+  google_id = params[:id]
+
+  api_key = ENV['GOOGLE_BOOKS_API_KEY']
+
+  url = URI("https://www.googleapis.com/books/v1/volumes/#{google_id}?key=#{api_key}")
+  response = Net::HTTP.get_response(url)
+  data = JSON.parse(response.body)
+  @book = data 
+  end
+  
+
+def register
+  book_params = params[:book]
+
+  book = Book.find_by(google_books_id: book_params[:google_books_id])
+
+  if book
+    flash[:alert] = "すでに登録されています"
+  else
+    book = Book.new(
+      title: book_params[:title],
+      author: book_params[:author].presence || "不明",
+      google_books_id: book_params[:google_books_id]
+    )
+
+    if book_params[:image_url].present?
+      file = URI.open(book_params[:image_url])
+      book.cover_image.attach(io: file, filename: "book.jpg")
+    end
+
+    book.body = book_params[:description] if book.body.blank?
+
+    unless book.save
+      flash[:alert] = book.errors.full_messages.join(", ")
+      redirect_to books_path and return
+    end
+
+    flash[:notice] = "登録しました"
+  end
+
+  current_user.ownerships.find_or_create_by(book: book)
+  redirect_to books_path
+end
+
   def destroy
-    @book = current_user.books.find_by(params[:id])
+    @book = current_user.books.find_by(id: params[:id])
     if current_user.guest?
       redirect_to books_path, notice: "削除しました（ゲストユーザーのため実際には削除されていません）"
     else
@@ -128,7 +221,7 @@ class BooksController < ApplicationController
   private
   def book_params
     params.require(:book).permit(
-      :title, :author, :series_id, :body, :status, :rating, :cover_image,
+      :title, :author, :series_id, :body, :status, :rating, :cover_image,:google_books_id,
     tag_ids: [])
   end
 

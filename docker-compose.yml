@@ -3,6 +3,7 @@ services:
     image: postgres:15
     environment:
       POSTGRES_PASSWORD: password
+      
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
@@ -16,7 +17,8 @@ services:
     depends_on:
       - db
     environment:
-    - RAILS_ENV=development
+      RAILS_ENV: development
+      GOOGLE_BOOKS_API_KEY: AIzaSyC1XBticNsjDga9zYCM7wt2ny6ZkLrtznk
 
 volumes:
   postgres_data:

@@ -3,26 +3,46 @@
 <div class="books-index">
   <div class="search-form">
   <h2>検索フォーム</h2>
+  <p>書籍を検索</p>
   <%= form_with url: books_path, method: :get, local: true do |f| %>
     <%= f.label :keyword, "キーワード" %>
     <%= f.text_field :keyword, class: "form-control" %>
     <%= f.collection_select :tag_ids, Tag.all, :id, :name, { include_blank: "タグ選択" }, { class: "form-control" } %>
     <%= f.submit "検索" %>
+
   <% end %></div>
 </div>
+<p>登録済み書籍</p>
 <div class="books-list" >
-  <% @ownerships.each do |ownership| %>
-    <%= link_to book_path(ownership.book), class: "book-card" do %>
-      <% if ownership.book.cover_image.attached? %>
-        <%= image_tag ownership.book.cover_image, class: "card-background" %>
-      <% else %>
-        <%= image_tag "default_book.png", class: "card-background" %>
+  <% if @ownerships.any? %>
+      <% @ownerships.each do |ownership| %>
+        <%= link_to book_path(ownership.book), class: "book-card" do %>
+          <% if ownership.book.cover_image.attached? %>
+            <%= image_tag ownership.book.cover_image, class: "card-background" %>
+          <% else %>
+            <%= image_tag "default_book.png", class: "card-background" %>
+          <% end %>
+          <div class="card-content">
+            <p class="book-title"><%= ownership.book.title %></p>
+            <p class="book-title"><%= ownership.book.author %></p>
+          </div>
+        <% end %>
       <% end %>
-      <div class="card-content">
-        <p class="book-title"><%= ownership.book.title %></p>
-        <p class="book-title"><%= ownership.book.author %></p>
-      </div>
-    <% end %>
   <% end %>
 </div>
-
+<div class="user-actions">
+  <% if params[:keyword].present? %>
+    <% if @ownerships.any?%>
+      <% if params[:keyword].present? %>
+        <p>「<%= params[:keyword] %>」の検索結果：<%= @total_books %>件</p>
+      <% else %>
+        <p>見つかりませんでした</p>
+      <% end %>
+      <p>他の書籍を探しますか？</p>
+        <%= link_to "Google Booksで他の書籍を探す", api_search_books_path(keyword: params[:keyword]), class: "btn move-btn" %>
+    <% else %>
+      <p>書籍が見つかりませんでした。</p>
+      <%= link_to "Google Booksで探す", api_search_books_path(keyword: params[:keyword]), class: "btn move-btn" %>
+    <% end %>
+  <% end%>
+</div>
