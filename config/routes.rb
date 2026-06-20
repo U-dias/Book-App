@@ -1,6 +1,19 @@
 Rails.application.routes.draw do
   root "books#index"
-  
+
+  # API検索
+resources :books do
+  collection do
+    get :api_search
+    get :api_show
+    post :register
+  end
+
+  member do
+    get :api_show
+  end
+end
+
   resources :users, only: [:new, :create, :show, :edit, :update, :destroy]
   resource :session, only: [:new, :create, :destroy]
   resources :read_histories, only: [:index, :show]
@@ -9,6 +22,7 @@ Rails.application.routes.draw do
 
   post 'guest_login', to: 'sessions#guest_login'
   delete '/logout' , to: 'sessions#destroy'
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

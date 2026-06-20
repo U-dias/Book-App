@@ -1,9 +1,12 @@
 class BooksController < ApplicationController
   before_action :restrict_guest, only: [:destroy]
+  require 'net/http'
+  require 'json'
+  require 'open-uri'
 
   def index
     @ownerships = current_user.ownerships.includes(:book)
-
+    @total_books = @ownerships.count
     #キーワード検索
     if params[:keyword].present?
     @ownerships = @ownerships.joins(:book)
@@ -23,12 +26,6 @@ class BooksController < ApplicationController
   def create
     @series = Series.all
 
-    #書籍の新規登録
-    @book = Book.find_or_initialize_by(
-      title: book_params[:title],
-      author: book_params[:author],
-      series_id: book_params[:series_id])
-
       #シリーズの作成又は既存使用
       series_name = params[:book][:series_name].presence
       series_id   = params[:book][:series_id].presence
@@ -41,11 +38,23 @@ class BooksController < ApplicationController
         else
           nil
         end
-      # 画像の登録
-      if params[:book][:cover_image].present?
-        @book.cover_image.attach(params[:book][:cover_image])
-      end
-      return render :new unless @book.save
+
+        @book = Book.find_or_create_by(
+          title: book_params[:title].strip,
+          author: book_params[:author].strip
+        )
+
+        unless @book
+          @book = Book.new(book_params)
+          @book.series = series if series
+
+          # 画像の登録
+          if params[:book][:cover_image].present?
+            @book.cover_image.attach(params[:book][:cover_image])
+          end
+          return render :new unless @book.save
+        end
+
       current_user.ownerships.find_or_create_by(book: @book)
       redirect_to @book
   end
@@ -113,6 +122,77 @@ class BooksController < ApplicationController
       flash.now[alert] = "更新に失敗しました。"
       render :edit
     end
+  end
+
+  def api_search
+    keyword = params[:keyword]
+    limit = (params[:limit] || 10).to_i
+    page = (params[:page] || 1).to_i
+    @total_count = response["totalItems"] 
+
+    start_index = (page - 1) * limit
+    if keyword.present?
+      response = HTTParty.get(
+        "https://www.googleapis.com/books/v1/volumes",
+        query: {
+          q: keyword,
+          key: ENV["GOOGLE_BOOKS_API_KEY"],
+          maxResults: limit,
+          startIndex: start_index
+        }
+      )
+
+      if response.code == 200
+        @books = response.parsed_response["items"] || []
+        @page = page
+        @limit = limit
+        @keyword = keyword
+      else
+        @books = []
+        flash.now[:alert] = "検索に失敗しました"
+      end
+    else
+      @books = []
+    end
+  end
+
+  def api_show
+  google_id = params[:id]
+
+  api_key = ENV['GOOGLE_BOOKS_API_KEY']
+
+  url = URI("https://www.googleapis.com/books/v1/volumes/#{google_id}?key=#{api_key}")
+  response = Net::HTTP.get_response(url)
+  data = JSON.parse(response.body)
+  @book = data 
+  end
+  
+
+ def register
+    book_params = params[:book]
+
+    author = book_params[:author].presence || "不明"
+
+    book = Book.find_or_create_by(
+      title: book_params[:title],
+      author: author
+    )
+    if book.persisted? && book.cover_image.blank?
+      if book_params[:image_url].present?
+        file = URI.open(book_params[:image_url])
+        book.cover_image.attach(io: file, filename: "book.jpg")
+      end
+    end
+    unless book.persisted?
+      redirect_to books_path, alert: "本の保存に失敗しました"
+      return
+    end
+
+    book.update(body: book_params[:description]) if book.body.blank?
+
+    current_user.ownerships.find_or_create_by(book: book)
+
+    redirect_to books_path, notice: "登録しました"
   end
 
   def destroy

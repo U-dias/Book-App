@@ -54,6 +54,8 @@ footer {
   background: #fff;
   padding: 0 12px;
   text-align: left;
+  overflow: hidden;
+  margin-bottom: 10px;
 }
 
 .book-card::after {

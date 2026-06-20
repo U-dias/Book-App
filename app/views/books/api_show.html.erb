@@ -1,0 +1,20 @@
+
+<% info = @book["volumeInfo"] || {} %>
+
+<h2><%= info["title"] %></h2>
+<p>著者: <%= info["authors"]&.join(", ") || "不明" %></p>
+<p>内容: <%= info["description"] || "説明なし" %></p>
+
+<% if info["imageLinks"] %>
+  <img src="<%= info["imageLinks"]["thumbnail"] %>">
+<% end %>
+
+<%= form_with url: register_books_path, method: :post, local: true do %>
+  <%= hidden_field_tag "book[title]", info["title"] %>
+  <%= hidden_field_tag "book[author]", info["authors"]&.join(", ") %>
+  <%= hidden_field_tag "book[description]", info["description"] %>
+  <%= hidden_field_tag "book[image_url]", info.dig("imageLinks", "thumbnail") %>
+
+  <%= submit_tag "登録する" %>
+<% end %>
+<%= link_to '一つ前に戻る', request.referer || root_path, class: "btn move-btn"  %>

@@ -1,0 +1,38 @@
+<h1>Google Booksで検索</h1>
+
+<h2>検索結果</h2>
+
+<div class="books-list">
+  <% @books.each do |book| %>
+    <% info = book["volumeInfo"] || {} %>
+
+    <%= link_to api_show_book_path(book["id"]), class: "book-card" do %>
+
+      <% if info["imageLinks"] && info["imageLinks"]["thumbnail"] %>
+        <%= image_tag info["imageLinks"]["thumbnail"], class: "card-background" %>
+      <% else %>
+        <%= image_tag "default_book.png", class: "card-background" %>
+      <% end %>
+
+      <div class="card-content">
+        <p class="book-title"><%= info["title"] %></p>
+        <p class="book-title">
+          <%= info["authors"]&.join(", ") || "不明" %>
+        </p>
+      </div>
+    <% end %>
+  <% end %>
+</div>
+
+<div class="user-actions">
+  <% if params[:keyword].present? %>
+    <p>「<%= params[:keyword] %>」の検索結果：<%= @total_count %>件</p>
+  <% else %>
+    <P>見つかりませんでした</p>
+  <% end %>
+  <% if @page > 1 %>
+    <%= link_to "前へ", api_search_books_path(keyword: @keyword, page: @page - 1, limit: @limit) %>
+  <% end %>
+
+  <%= link_to "次へ", api_search_books_path(keyword: @keyword, page: @page + 1, limit: @limit) %>
+</div>
