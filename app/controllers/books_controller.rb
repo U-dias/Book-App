@@ -149,14 +149,21 @@ end
       )
 
       if response.code == 200
-        @books = response.parsed_response["items"] || []
-        @total_count = response["totalItems"] 
+          Rails.logger.debug "CODE: #{response.code}"
+  Rails.logger.debug "BODY: #{response.parsed_response.inspect}"
+        body = response.parsed_response
+
+        @books = body["items"] || []
+        @total_count = body["totalItems"] || 0
+
         @page = page
         @limit = limit
         @keyword = keyword
       else
         @books = []
         flash.now[:alert] = "検索に失敗しました"
+        puts response.code
+puts response.parsed_response
       end
     else
       @books = []

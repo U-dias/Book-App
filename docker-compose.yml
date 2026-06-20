@@ -2,8 +2,9 @@ services:
   db:
     image: postgres:15
     environment:
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
-      
+      POSTGRES_DB: book_app_development
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
@@ -18,6 +19,7 @@ services:
       - db
     environment:
       RAILS_ENV: development
+      DATABASE_URL: postgres://postgres:password@db:5432/book_app_development
       GOOGLE_BOOKS_API_KEY: AIzaSyC1XBticNsjDga9zYCM7wt2ny6ZkLrtznk
 
 volumes:

@@ -10,7 +10,7 @@
 また、読書履歴や検索機能を通じて読書傾向を可視化し、今後の書籍選びに活かすことを目的としています。
 
 ▫️本番環境URL
-https://book-app-2-vmsy.onrender.com/session/new  
+https://book-app-2-vmsy.onrender.com
 
 ▫️主な機能  
 ・ユーザー機能
