@@ -8,8 +8,8 @@ FROM registry.docker.com/library/ruby:$RUBY_VERSION-slim as base
 WORKDIR /rails
 
 # Set production environment
-# ENV RAILS_ENV="development" \
-#     BUNDLE_PATH="/usr/local/bundle"
+ENV RAILS_ENV="development" \
+    BUNDLE_PATH="/usr/local/bundle"
 
 
 # Throw-away build stage to reduce size of final image
