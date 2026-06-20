@@ -16,7 +16,7 @@
     <div class="form-group-image-row">
       <div class="upload-image">
         <div class="cover-preview">
-          <img id="preview" src="<%= @book.cover_image.attached? ? url_for(@book.cover_image) : asset_path('default_book.png') %>" width="100">
+          <%= image_tag(@book.cover_image.attached? ? url_for(@book.cover_image) : "default_book.png", id: "preview", width: 100) %>
         </div>
       </div>
     </div>
