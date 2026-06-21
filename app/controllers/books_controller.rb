@@ -6,6 +6,9 @@ class BooksController < ApplicationController
 
   def index
     @ownerships = current_user.ownerships.includes(:book)
+    Book.find_each do |book|
+  current_user.ownerships.find_or_create_by(book: book)
+end
     #キーワード検索
     if params[:keyword].present?
     @ownerships = @ownerships.joins(:book)
