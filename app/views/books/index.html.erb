@@ -32,17 +32,13 @@
 </div>
 <div class="user-actions">
   <% if params[:keyword].present? %>
-    <% if @ownerships.any?%>
-      <% if params[:keyword].present? %>
-        <p>「<%= params[:keyword] %>」の検索結果：<%= @total_books %>件</p>
-      <% else %>
-        <p>見つかりませんでした</p>
-      <% end %>
+    <% if @ownerships.any? %>
+      <p>「<%= params[:keyword] %>」の検索結果：<%= @total_books %>件</p>
       <p>他の書籍を探しますか？</p>
-        <%= link_to "Google Booksで他の書籍を探す", api_search_books_path(keyword: params[:keyword]), class: "btn move-btn" %>
+      <%= link_to "Google Booksで他の書籍を探す", api_search_books_path(keyword: params[:keyword]), class: "btn move-btn" %>
     <% else %>
       <p>書籍が見つかりませんでした。</p>
       <%= link_to "Google Booksで探す", api_search_books_path(keyword: params[:keyword]), class: "btn move-btn" %>
     <% end %>
-  <% end%>
+  <% end %>
 </div>

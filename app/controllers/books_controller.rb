@@ -24,28 +24,24 @@ class BooksController < ApplicationController
     @series = Series.all
   end
 
-def create
-  Rails.logger.debug params.inspect
-  @series = Series.all
+  def create
+    @series = Series.all
 
-  series_name = params[:book][:series_name].presence
-  series_id   = params[:book][:series_id].presence
+    series =
+      if params[:book][:series_name].present?
+        Series.find_or_create_by(name: params[:book][:series_name].strip)
+      elsif params[:book][:series_id].present?
+        Series.find_by(id: params[:book][:series_id])
+      end
 
-  series =
-    if series_name.present?
-      Series.find_or_create_by(name: series_name.strip)
-    elsif series_id.present?
-      Series.find_by(id: series_id)
-    end
-    @book = Book.find_by(google_books_id: book_params[:google_books_id])
+    @book = Book.find_or_initialize_by(
+      google_books_id: book_params[:google_books_id]
+    )
 
-    if @book
-      flash[:alert] = "すでに登録されています"
-    else
-      @book = Book.new(
+    if @book.new_record?
+      @book.assign_attributes(
         title: book_params[:title].strip,
         author: book_params[:author].strip,
-        google_books_id: book_params[:google_books_id], 
         series: series
       )
 
@@ -53,17 +49,15 @@ def create
         @book.cover_image.attach(params[:book][:cover_image])
       end
 
-      if @book.save!
-      flash[:notice] = "登録しました"
-      else
-        Rails.logger.debug @book.errors.full_messages
-  flash[:alert] = @book.errors.full_messages.join(", ")
+      unless @book.save
+        flash[:alert] = "登録に失敗しました"
+        render :new and return
       end
     end
+    current_user.ownerships.find_or_create_by!(book: @book)
 
-  current_user.ownerships.find_or_create_by(book: @book)
-  redirect_to @book
-end
+    redirect_to @book, notice: "登録しました"
+  end
 
   def show
     @book = Book.find(params[:id])
@@ -163,8 +157,6 @@ end
       else
         @books = []
         flash.now[:alert] = "検索に失敗しました"
-        puts response.code
-puts response.parsed_response
       end
     else
       @books = []
