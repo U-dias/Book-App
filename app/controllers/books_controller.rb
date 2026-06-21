@@ -116,8 +116,7 @@ end
     @book.tags = selected_tags + new_tags
 
     if @book.save
-      # ←ここ重要
-      ownership&.update(status: params[:book][:status])
+      @ownership&.update(status: params[:book][:status])
 
       if params[:book][:cover_image].present?
         @book.cover_image.purge
