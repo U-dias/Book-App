@@ -93,12 +93,9 @@ end
   end
 
   def update
-    Rails.logger.debug "params[:id]=#{params[:id]}"
-Rails.logger.debug "ownerships=#{current_user.ownerships.pluck(:book_id)}"
-    ownership = current_user.ownerships.find_by(book_id: params[:id])
-    @book = ownership&.book
+    @book = Book.find(params[:id])
 
-    return redirect_to root_path, alert: "権限がありません" unless @book
+    ownership = current_user&.ownerships&.find_by(book_id: @book.id)
 
     @book.assign_attributes(book_params)
 
@@ -119,9 +116,9 @@ Rails.logger.debug "ownerships=#{current_user.ownerships.pluck(:book_id)}"
     @book.tags = selected_tags + new_tags
 
     if @book.save
-      ownership.update(status: params[:book][:status]) if ownership
+      # ←ここ重要
+      ownership&.update(status: params[:book][:status])
 
-      # 画像
       if params[:book][:cover_image].present?
         @book.cover_image.purge
         @book.cover_image.attach(params[:book][:cover_image])
