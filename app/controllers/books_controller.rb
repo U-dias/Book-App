@@ -30,37 +30,27 @@ end
   def create
     @series = Series.all
 
-    # シリーズの処理
     series =
       if params[:book][:series_name].present?
         Series.find_or_create_by(name: params[:book][:series_name].strip)
-      elsif params[:book][:series_id].present?
+      else
         Series.find_by(id: params[:book][:series_id])
       end
 
-    @book = Book.find_or_initialize_by(
-      google_books_id: book_params[:google_books_id]
-    )
+    @book = Book.new(book_params)
+    @book.series = series
 
-    if @book.new_record?
-      @book.assign_attributes(
-        title: book_params[:title].strip,
-        author: book_params[:author].strip,
-        series: series
-      )
-
-      if params[:book][:cover_image].present?
-        @book.cover_image.attach(params[:book][:cover_image])
-      end
-
-      unless @book.save
-        flash[:alert] = "登録に失敗しました"
-        render :new and return
-      end
+    if params[:book][:cover_image].present?
+      @book.cover_image.attach(params[:book][:cover_image])
     end
-    current_user.ownerships.find_or_create_by!(book: @book)
 
-    redirect_to @book, notice: "登録しました"
+    if @book.save
+      current_user.ownerships.find_or_create_by!(book: @book)
+      redirect_to @book, notice: "登録しました"
+    else
+      flash.now[:alert] = "登録に失敗しました"
+      render :new
+    end
   end
 
   def show
