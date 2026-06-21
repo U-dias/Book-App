@@ -30,6 +30,7 @@ end
   def create
     @series = Series.all
 
+    # シリーズの処理
     series =
       if params[:book][:series_name].present?
         Series.find_or_create_by(name: params[:book][:series_name].strip)
