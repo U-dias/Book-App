@@ -87,46 +87,47 @@ end
   end
 
   def edit
-    @book = Book.find(params[:id])
+    @book = current_user.ownerships.find_by(book_id: params[:id])&.book
     @tag_name = params[:tag_name]
     @series = Series.all
   end
 
   def update
-    @book = Book.find(params[:id])
-    tag_name = params[:book][:tag_name]
+    ownership = current_user.ownerships.find_by(book_id: params[:id])
+    @book = ownership&.book
 
-    #シリーズの更新
+    return redirect_to root_path, alert: "権限がありません" unless @book
+
     @book.assign_attributes(book_params)
+
+    # シリーズ
     if params[:book][:series_name].present?
       @book.series = Series.find_or_create_by(name: params[:book][:series_name])
     elsif params[:book][:series_id].present?
       @book.series = Series.find(params[:book][:series_id])
     end
-    #タグの更新
+
+    # タグ
     selected_tags = Tag.where(id: params[:book][:tag_ids])
-    
     new_tags = if params[:book][:tag_name].present?
-      params[:book][:tag_name].split.map do |name|
-        Tag.find_or_create_by(name: name)
-      end
+      params[:book][:tag_name].split.map { |name| Tag.find_or_create_by(name: name) }
     else
       []
     end
     @book.tags = selected_tags + new_tags
-    #ステータスの更新
-    if @book.save
-      ownership = current_user.ownerships.find_by(book_id: @book.id)
-      ownership.update(status: params[:book][:status])
 
-    # 画像の更新
+    if @book.save
+      ownership.update(status: params[:book][:status]) if ownership
+
+      # 画像
       if params[:book][:cover_image].present?
         @book.cover_image.purge
         @book.cover_image.attach(params[:book][:cover_image])
       end
+
       redirect_to @book, notice: "更新しました"
     else
-      flash.now[alert] = "更新に失敗しました。"
+      flash.now[:alert] = "更新に失敗しました。"
       render :edit
     end
   end
