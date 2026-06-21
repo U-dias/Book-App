@@ -7,6 +7,7 @@
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+    <meta name="turbo-cache-control" content="no-cache">
     <title><%= content_for?(:title) ? yield(:title) : "MyApp" %></title>
   </head>
 
