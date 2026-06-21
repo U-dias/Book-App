@@ -88,10 +88,6 @@ end
 
   def edit
     @book = Book.find(params[:id])
-
-    ownership = current_user.ownerships.find_by(book_id: @book.id)
-    return redirect_to root_path, alert: "権限がありません" unless ownership
-
     @tag_name = params[:tag_name]
     @series = Series.all
   end
