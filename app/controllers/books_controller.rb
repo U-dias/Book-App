@@ -95,7 +95,7 @@ end
   def update
     @book = Book.find(params[:id])
 
-    ownership = current_user&.ownerships&.find_by(book_id: @book.id)
+    @ownership = current_user&.ownerships&.find_by(book_id: @book.id)
 
     @book.assign_attributes(book_params)
 
