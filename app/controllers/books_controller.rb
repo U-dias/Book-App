@@ -93,6 +93,8 @@ end
   end
 
   def update
+    Rails.logger.debug "params[:id]=#{params[:id]}"
+Rails.logger.debug "ownerships=#{current_user.ownerships.pluck(:book_id)}"
     ownership = current_user.ownerships.find_by(book_id: params[:id])
     @book = ownership&.book
 
@@ -128,6 +130,8 @@ end
       redirect_to @book, notice: "更新しました"
     else
       flash.now[:alert] = "更新に失敗しました。"
+      @series = Series.all 
+      @tag_name = params[:book][:tag_name]
       render :edit
     end
   end
