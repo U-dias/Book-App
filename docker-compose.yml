@@ -17,6 +17,8 @@ services:
       - "3000:3000"
     depends_on:
       - db
+    env_file:
+      - .env
     environment:
       RAILS_ENV: development
       DATABASE_URL: postgres://postgres:password@db:5432/book_app_development
