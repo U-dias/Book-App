@@ -41,6 +41,7 @@ https://book-app-2-vmsy.onrender.com
 - Docker（開発環境）
 - Render（本番環境）
 - Active Storage
+- Cloudinary
 
 ▫️工夫した点  
 - ゲストユーザー機能を実装し、ログインなしでもアプリ体験が可能になるよう設計
