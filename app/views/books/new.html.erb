@@ -43,7 +43,7 @@
     <div class="form-group-image-row">
       <div class="upload-image">
         <div class="cover-preview">
-          <img id="preview" src="<%= @book.cover_image.attached? ? url_for(@book.cover_image) : asset_path('default_book.png') %>" width="100">
+          <img id="preview" src="<%= (@book.persisted? && @book.cover_image.attached?) ? url_for(@book.cover_image) : asset_path('default_book.png') %>" width="100">
         </div>
       </div>
       <div class="upload-form">
