@@ -1,11 +1,14 @@
-document.addEventListener("change", (e) => {
-  if (e.target.id !== "image_input") return;
+document.addEventListener("turbo:load", () => {
+  const input = document.getElementById("image_input");
+  if (!input) return;
 
-  const file = e.target.files[0];
-  if (!file) return;
+  input.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-  const preview = document.getElementById("preview");
-  if (!preview) return;
+    const preview = document.getElementById("preview");
+    if (!preview) return;
 
-  preview.src = URL.createObjectURL(file);
+    preview.src = URL.createObjectURL(file);
+  });
 });
