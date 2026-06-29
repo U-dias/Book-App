@@ -1,7 +1,7 @@
 /* ページ全体のスタイル */
 .form-grid {
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: 1fr 1fr;
 }
 
 .edit-page .form-group.rating {
