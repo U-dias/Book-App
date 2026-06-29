@@ -1,25 +1,44 @@
 <% content_for :title, @book.title %>
-<div>
-  <p>書籍名：<%= @book.title %></p>
-  <p>著者：<%= @book.author %></p>
-  <p>シリーズ：<%= @book.series&.name || "単巻" %></p>
-  <p>評価：<%= @book.rating %></p>
-  <p>内容：<%= @book.body %></p>
-  <% if @ownership.present? %>
-    <p>ステータス：<%= @ownership.status ? @ownership.status_label : "未設定" %></p>
+<div  class="form-grid">
+  <div class="form-group">
+    <p>書名：<%= @book.title %></p>
+  </div>
+  <div class="form-group">
+    <p>評価：<%= @book.rating %></p>
+  </div>
+  <div class="form-group">
+    <p>著者：<%= @book.author %></p>
+  </div>
+  <div class="form-group">
     <h3>タグ</h3>
     <% @ownership.book.tags.each do |tag| %>
       <span class="tag" ><%= tag.name %></span>
     <% end %>
-  <% end %>
-  <p>表紙画像</p>
-    <div class="form-group-image-row">
-      <div class="upload-image">
-        <div class="cover-preview">
-          <%= image_tag(@book.cover_image.attached? ? url_for(@book.cover_image) : "default_book.png", id: "preview", width: 100) %>
+  </div>
+  <div class="form-group">
+    <p>シリーズ：<%= @book.series&.name || "単巻" %></p>
+  </div>
+  <div class="form-group">
+    <% if @ownership.present? %>
+      <p>ステータス：<%= @ownership.status ? @ownership.status_label : "未設定" %></p>
+    <% end %>
+  </div>
+  <div class="form-group">
+    <div>説明：</div>
+    <div class="synopsis">
+      <%= simple_format(strip_tags(@book.body)) %>
+    </div>
+  </div>
+  <div class="form-group">
+    <p>表紙画像</p>
+      <div class="form-group-image-row">
+        <div class="upload-image">
+          <div class="cover-preview">
+            <%= image_tag(@book.cover_image.attached? ? url_for(@book.cover_image) : "default_book.png", id: "preview", width: 100) %>
+          </div>
         </div>
       </div>
-    </div>
+  </div>
 </div>
 <div class="user-actions">
   <%= button_to "削除",

@@ -93,8 +93,6 @@ footer {
   padding: 10px;
 }
 
-
-
 /* リンクの文字色の変更 */
 a {
   text-decoration: none;
@@ -199,7 +197,7 @@ input[type="title"],
   height: 20px;
 }
 
-input[tyoe="body"] {
+input[type="body"] {
   width: 200px;
   height: 100px;
 }
@@ -211,6 +209,7 @@ label {
 .form-group {
   margin-bottom: 10px;
 }
+
 
 .form-control {
   width: 200px;

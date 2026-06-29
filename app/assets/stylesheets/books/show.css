@@ -1,3 +1,13 @@
+/* ページ全体のスタイル */
+.form-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+}
+
+.synopsis p {
+  width: 450px;
+}
+
 /* アクションボタンの調整 */
 .user-actions {
   margin-top: 16px;
